@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>事業所ハブ｜部屋・問い合わせ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EEF2F0; --surface:#FFFFFF; --surface-soft:#F5F8F6;
+    --ink:#20302A; --ink-soft:#5A6B64; --line:#DDE5E1;
+    --occ:#1E6F5C;  --occ-bg:#E2EFEA;
+    --vac:#8A968F;  --vac-bg:#EFF1F0;
+    --cln:#2E5E97;  --cln-bg:#E4ECF6;
+    --wrk:#B5780F;  --wrk-bg:#FBEFD7;
+    --male:#3A6EA5; --male-bg:#E7EEF4;
+    --female:#9C5577; --female-bg:#F6E9EE;
+    --lead:#6B4E9B; --lead-bg:#EDE7F5;
+    --danger:#B23B33; --danger-bg:#FAE3E1;
+    --radius:18px; --tap:54px;
+    --shadow:0 2px 10px rgba(32,48,42,.06),0 1px 3px rgba(32,48,42,.05);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP",sans-serif;
+    background:var(--bg); color:var(--ink); font-size:18px; line-height:1.7;
+    -webkit-font-smoothing:antialiased; -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:980px; margin:0 auto; min-height:100vh; padding-bottom:60px;}
+
+  header.app{padding:max(18px,env(safe-area-inset-top)) 16px 6px; display:flex; align-items:center; gap:12px;}
+  .logo{width:44px;height:44px;border-radius:13px;background:var(--occ);color:#fff;display:grid;place-items:center;font-family:"Zen Maru Gothic",sans-serif;font-weight:900;font-size:20px;flex-shrink:0;}
+  header.app h1{font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:21px;margin:0;letter-spacing:.02em;}
+  header.app .sub{font-size:13px;color:var(--ink-soft);margin-top:1px;}
+  .gear{margin-left:auto;width:46px;height:46px;border-radius:12px;border:2px solid var(--line);background:var(--surface);font-size:22px;cursor:pointer;flex-shrink:0;}
+
+  /* メインタブ */
+  .maintabs{display:flex;gap:8px;padding:10px 16px 0;}
+  .maintab{
+    flex:1;min-height:var(--tap);border:2px solid var(--line);border-bottom:none;
+    border-radius:16px 16px 0 0;background:var(--surface-soft);color:var(--ink-soft);
+    font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:17px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .maintab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 -2px 8px rgba(32,48,42,.05);}
+  .maintab[aria-selected="true"].t-rooms{color:var(--occ);border-color:var(--occ);}
+  .maintab[aria-selected="true"].t-leads{color:var(--lead);border-color:var(--lead);}
+
+  .syncbar{display:flex;align-items:center;gap:8px;margin:0 16px;padding:8px 12px;border-radius:0 0 12px 12px;font-size:13px;font-weight:700;}
+  .syncbar.idle{background:var(--occ-bg);color:var(--occ);}
+  .syncbar.busy{background:var(--cln-bg);color:var(--cln);}
+  .syncbar.err{background:var(--danger-bg);color:var(--danger);}
+  .syncbar .retry{margin-left:auto;border:2px solid currentColor;background:transparent;color:inherit;font:inherit;font-weight:700;font-size:12px;border-radius:8px;padding:4px 10px;cursor:pointer;}
+  .spin{width:13px;height:13px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;display:inline-block;animation:sp .7s linear infinite;}
+  @keyframes sp{to{transform:rotate(360deg);}}
+
+  .summary{padding:8px 16px 4px;}
+  .sumbar{display:flex;height:16px;border-radius:99px;overflow:hidden;background:var(--vac-bg);box-shadow:inset 0 0 0 1px var(--line);}
+  .sumbar i{display:block;height:100%;}
+  .sumbar .s-occ{background:var(--occ);} .sumbar .s-cln{background:var(--cln);} .sumbar .s-wrk{background:var(--wrk);}
+  .sumlabels{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px;font-size:14px;color:var(--ink-soft);}
+  .sumlabels b{font-family:"Zen Maru Gothic",sans-serif;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .legend{display:inline-flex;align-items:center;gap:6px;}
+  .sw{width:12px;height:12px;border-radius:4px;display:inline-block;}
+
+  .filters{display:flex;gap:8px;overflow-x:auto;padding:10px 16px 4px;-webkit-overflow-scrolling:touch;}
+  .chip{flex:0 0 auto;min-height:42px;padding:0 16px;border:2px solid var(--line);background:var(--surface);color:var(--ink-soft);border-radius:99px;font:inherit;font-weight:700;font-size:14px;cursor:pointer;}
+  .chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:8px 16px 24px;}
+  @media(min-width:520px){.grid{grid-template-columns:repeat(4,1fr);}}
+  @media(min-width:720px){.grid{grid-template-columns:repeat(6,1fr);}}
+  .room{
+    background:var(--surface); border-radius:14px; border:2px solid var(--line);
+    padding:12px 10px; cursor:pointer; text-align:left; font:inherit; color:inherit;
+    min-height:96px; display:flex; flex-direction:column; gap:4px;
+    box-shadow:var(--shadow); transition:transform .1s ease; border-top-width:6px;
+  }
+  .room:active{transform:scale(.97);}
+  .room .no{font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:17px;display:flex;align-items:center;justify-content:space-between;gap:4px;}
+  .room .tag{font-size:11px;font-weight:700;padding:2px 7px;border-radius:99px;white-space:nowrap;}
+  .room .who{font-size:14px;font-weight:700;line-height:1.4;word-break:break-all;}
+  .room .who.empty{color:var(--vac);font-weight:500;}
+  .room .foot{display:flex;align-items:center;gap:6px;margin-top:auto;font-size:11px;color:var(--ink-soft);}
+  .sexbadge{font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px;}
+  .sexbadge.male{background:var(--male-bg);color:var(--male);}
+  .sexbadge.female{background:var(--female-bg);color:var(--female);}
+  .room.occupied{border-top-color:var(--occ);} .room.occupied .tag{background:var(--occ-bg);color:var(--occ);}
+  .room.vacant{border-top-color:var(--vac);background:var(--surface-soft);} .room.vacant .tag{background:var(--vac-bg);color:var(--vac);}
+  .room.cleaning{border-top-color:var(--cln);} .room.cleaning .tag{background:var(--cln-bg);color:var(--cln);}
+  .room.work{border-top-color:var(--wrk);} .room.work .tag{background:var(--wrk-bg);color:var(--wrk);}
+
+  /* ===== 問い合わせ（leads） ===== */
+  .stagebtns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 16px 4px;}
+  @media(min-width:600px){.stagebtns{grid-template-columns:repeat(6,1fr);}}
+  .stagebtn{min-height:60px;border:2px solid var(--line);background:var(--surface);border-radius:14px;font:inherit;font-weight:700;font-size:14px;cursor:pointer;color:var(--ink-soft);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 4px;}
+  .stagebtn .scnt{font-family:"Zen Maru Gothic",sans-serif;font-weight:900;font-size:20px;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1;}
+  .stagebtn[aria-pressed="true"]{background:var(--lead-bg);color:var(--lead);border-color:var(--lead);}
+  .stagebtn[aria-pressed="true"] .scnt{color:var(--lead);}
+  .stagebtn.has-warn{border-color:var(--danger);}
+  .stagebtn .swarn{font-size:10px;font-weight:900;color:var(--danger);}
+  .lead-list{display:flex;flex-direction:column;gap:10px;padding:10px 16px 24px;}
+  .lead{
+    background:var(--surface);border:2px solid var(--line);border-left:6px solid var(--lead);
+    border-radius:12px;padding:10px 12px;cursor:pointer;text-align:left;font:inherit;color:inherit;
+    box-shadow:var(--shadow);
+  }
+  .lead:active{transform:scale(.98);}
+  .lead .lname{font-weight:700;font-size:16px;}
+  .lead .lfrom{font-size:12px;color:var(--ink-soft);margin-top:1px;}
+  .lead .lnext{font-size:12px;font-weight:700;color:var(--wrk);background:var(--wrk-bg);border-radius:8px;padding:2px 8px;margin-top:6px;display:inline-block;}
+  .stage-empty{font-size:13px;color:var(--ink-soft);text-align:center;padding:10px 4px;}
+
+  .fab{
+    position:fixed;left:50%;transform:translateX(-50%);
+    bottom:max(20px,env(safe-area-inset-bottom));
+    width:min(560px,calc(100% - 32px));min-height:58px;
+    border:none;border-radius:16px;color:#fff;
+    font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:19px;cursor:pointer;
+    box-shadow:0 6px 18px rgba(32,48,42,.22);z-index:20;background:var(--lead);
+    display:none;align-items:center;justify-content:center;gap:8px;
+  }
+
+  /* 画面（詳細・設定・リード詳細） */
+  #detail,#settings,#leadform{display:none;}
+  .dbar{position:sticky;top:0;background:var(--bg);z-index:5;display:flex;align-items:center;gap:8px;padding:max(14px,env(safe-area-inset-top)) 16px 10px;}
+  .back{min-height:46px;padding:0 14px;border:2px solid var(--line);background:var(--surface);border-radius:12px;font:inherit;font-weight:700;color:var(--ink);cursor:pointer;}
+  .dbar h2{font-family:"Zen Maru Gothic",sans-serif;font-size:22px;margin:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .panel{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);margin:0 16px 14px;padding:16px;}
+  .panel h3{font-family:"Zen Maru Gothic",sans-serif;font-size:16px;margin:0 0 12px;color:var(--ink-soft);}
+  label.field{display:block;margin-bottom:14px;}
+  label.field .lab{font-size:14px;font-weight:700;margin-bottom:6px;display:block;}
+  label.field .lab .opt{color:var(--ink-soft);font-weight:500;font-size:12px;}
+  input,select,textarea{width:100%;font:inherit;font-size:17px;padding:11px 13px;border:2px solid var(--line);border-radius:12px;background:var(--surface-soft);color:var(--ink);min-height:var(--tap);}
+  textarea{min-height:70px;resize:vertical;}
+  input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid var(--cln);outline-offset:2px;}
+  .frow{display:flex;gap:10px;}
+  .frow label.field{flex:1;}
+  .status-pick{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+  .status-pick button{min-height:50px;border:2px solid var(--line);background:var(--surface);border-radius:12px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;color:var(--ink-soft);}
+  .status-pick button[aria-pressed="true"][data-s="occupied"]{background:var(--occ-bg);color:var(--occ);border-color:var(--occ);}
+  .status-pick button[aria-pressed="true"][data-s="vacant"]{background:var(--vac-bg);color:var(--vac);border-color:var(--vac);}
+  .status-pick button[aria-pressed="true"][data-s="cleaning"]{background:var(--cln-bg);color:var(--cln);border-color:var(--cln);}
+  .status-pick button[aria-pressed="true"][data-s="work"]{background:var(--wrk-bg);color:var(--wrk);border-color:var(--wrk);}
+
+  /* 段階ピッカー（リード用） */
+  .stage-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .stage-pick button{min-height:48px;border:2px solid var(--line);background:var(--surface);border-radius:12px;font:inherit;font-weight:700;font-size:14px;cursor:pointer;color:var(--ink-soft);}
+  .stage-pick button[aria-pressed="true"]{background:var(--lead-bg);color:var(--lead);border-color:var(--lead);}
+
+  .log{border-left:4px solid var(--line);padding:4px 0 14px 14px;margin-bottom:4px;}
+  .log .ldate{font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:14px;color:var(--occ);}
+  .log .ltext{margin-top:2px;white-space:pre-wrap;}
+  .log .ldel{margin-top:8px;background:none;border:none;color:var(--danger);font:inherit;font-size:13px;font-weight:700;cursor:pointer;padding:4px 0;text-decoration:underline;}
+  .log-empty{color:var(--ink-soft);font-size:15px;padding:4px 0 12px;}
+  .addlog{border:2px dashed var(--line);border-radius:14px;padding:14px;margin-top:6px;}
+  .addlog .row{display:flex;gap:10px;}
+  .addlog .row label.field{margin-bottom:10px;}
+  .note-photo{font-size:12px;color:var(--ink-soft);margin:0 0 10px;}
+
+  .btn-primary{width:100%;min-height:54px;border:none;border-radius:14px;background:var(--occ);color:#fff;font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:17px;cursor:pointer;}
+  .btn-primary.purple{background:var(--lead);}
+  .btn-primary.blue{background:var(--cln);}
+  .btn-delete{width:100%;margin-top:12px;min-height:50px;border:2px solid var(--danger-bg);background:var(--danger-bg);color:var(--danger);border-radius:12px;font:inherit;font-weight:700;cursor:pointer;}
+
+  .setrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);}
+  .setrow .rno{flex:1;}
+  .setrow .rsex{flex:0 0 130px;}
+  .setrow .rno input,.setrow .rsex select{min-height:48px;padding:8px 10px;font-size:16px;}
+  .danger-zone{border:2px solid var(--danger-bg);border-radius:14px;padding:14px;margin-top:6px;}
+  .danger-zone p{margin:0 0 10px;font-size:14px;color:var(--ink-soft);}
+  .btn-danger{width:100%;min-height:50px;border:2px solid var(--danger);background:var(--surface);color:var(--danger);border-radius:12px;font:inherit;font-weight:700;cursor:pointer;}
+  .setnote{font-size:13px;color:var(--ink-soft);margin:2px 0 0;}
+
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;}.spin{animation:none;}}
+</style>
+</head>
+<body>
+
+<!-- ===== メイン ===== -->
+<div class="wrap" id="main">
+  <header class="app">
+    <div class="logo" aria-hidden="true">事</div>
+    <div><h1>事業所ハブ</h1><div class="sub">部屋と問い合わせを、ひと目で。</div></div>
+    <button class="gear" id="open-settings" aria-label="設定">⚙</button>
+  </header>
+
+  <div class="maintabs" role="tablist">
+    <button class="maintab t-rooms" role="tab" data-mt="rooms" aria-selected="true">🚪 部屋ボード</button>
+    <button class="maintab t-leads" role="tab" data-mt="leads" aria-selected="false">📋 問い合わせ</button>
+  </div>
+  <div class="syncbar idle" id="syncbar"><span id="sync-msg">準備中…</span></div>
+
+  <!-- 部屋ボード -->
+  <div id="tab-rooms">
+    <section class="summary" aria-label="埋まり具合">
+      <div class="sumbar" id="sumbar"></div>
+      <div class="sumlabels" id="sumlabels"></div>
+    </section>
+    <div class="filters" id="filters" role="group" aria-label="しぼり込み">
+      <button class="chip" data-f="all" aria-pressed="true">すべて</button>
+      <button class="chip" data-f="occupied" aria-pressed="false">入居中</button>
+      <button class="chip" data-f="vacant" aria-pressed="false">空室</button>
+      <button class="chip" data-f="cleaning" aria-pressed="false">清掃中</button>
+      <button class="chip" data-f="work" aria-pressed="false">工事中</button>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <!-- 問い合わせボード -->
+  <div id="tab-leads" style="display:none">
+    <div class="stagebtns" id="stage-btns"></div>
+    <div class="lead-list" id="lead-list"></div>
+  </div>
+</div>
+
+<button class="fab" id="fab-lead">＋ 問い合わせを追加</button>
+
+<!-- ===== 部屋詳細 ===== -->
+<div class="wrap" id="detail">
+  <div class="dbar">
+    <button class="back" data-back>← もどる</button>
+    <h2 id="d-title">部屋</h2>
+  </div>
+  <div class="panel">
+    <h3>この部屋のこと</h3>
+    <label class="field"><span class="lab">状態</span></label>
+    <div class="status-pick" id="d-status">
+      <button data-s="occupied">入居中</button>
+      <button data-s="vacant">空室</button>
+      <button data-s="cleaning">清掃中</button>
+      <button data-s="work">工事中</button>
+    </div>
+    <div style="height:14px"></div>
+    <label class="field"><span class="lab">入居者の名前 <span class="opt">（空室なら空欄）</span></span><input id="d-tenant" placeholder="例：山田さん"></label>
+    <label class="field"><span class="lab">入居日 <span class="opt">（任意）</span></span><input id="d-movein" type="date"></label>
+    <label class="field"><span class="lab">メモ <span class="opt">（任意）</span></span><textarea id="d-memo" placeholder="部屋の特徴・注意点など"></textarea></label>
+    <button class="btn-primary" id="d-save">この部屋を保存</button>
+  </div>
+  <div class="panel">
+    <h3>できごと・設備の記録</h3>
+    <div id="d-logs"></div>
+    <div class="addlog">
+      <div class="row">
+        <label class="field" style="flex:0 0 150px"><span class="lab">日にち</span><input id="l-date" type="date"></label>
+        <label class="field" style="flex:1"><span class="lab">内容</span><input id="l-text" placeholder="例：エアコン新しく交換"></label>
+      </div>
+      <p class="note-photo">※ 写真の共有は次の段階で対応します（今は文字データのみ）。</p>
+      <button class="btn-primary blue" id="l-add">記録を追加する</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 問い合わせ詳細 ===== -->
+<div class="wrap" id="leadform">
+  <div class="dbar">
+    <button class="back" data-back>← もどる</button>
+    <h2 id="lf-title">問い合わせ</h2>
+  </div>
+
+  <div class="panel">
+    <h3>いまの段階</h3>
+    <div class="stage-pick" id="lf-stage"></div>
+  </div>
+
+  <div class="panel">
+    <h3>ご本人のこと</h3>
+    <label class="field"><span class="lab">ご本人氏名</span><input id="lf-name" placeholder="例：山田 花子"></label>
+    <div class="frow">
+      <label class="field"><span class="lab">性別 <span class="opt">（任意）</span></span>
+        <select id="lf-sex"><option value="">―</option><option value="男性">男性</option><option value="女性">女性</option><option value="その他">その他</option></select>
+      </label>
+      <label class="field"><span class="lab">年齢 <span class="opt">（任意）</span></span><input id="lf-age" type="number" inputmode="numeric" min="0" max="130"></label>
+    </div>
+    <label class="field"><span class="lab">住所 <span class="opt">（任意）</span></span><input id="lf-addr"></label>
+  </div>
+
+  <div class="panel">
+    <h3>問い合わせてきた方</h3>
+    <div class="frow">
+      <label class="field"><span class="lab">どなたから？</span>
+        <select id="lf-fromtype">
+          <option value="ご本人">ご本人</option>
+          <option value="ご家族">ご家族</option>
+          <option value="支援者・ケアマネ">支援者・ケアマネ</option>
+          <option value="その他">その他</option>
+        </select>
+      </label>
+      <label class="field"><span class="lab">お名前 <span class="opt">（ご本人なら空欄）</span></span><input id="lf-fromname"></label>
+    </div>
+    <label class="field"><span class="lab">ご本人との関係 <span class="opt">（例：長女、担当ケアマネ）</span></span><input id="lf-relation"></label>
+  </div>
+
+  <div class="panel">
+    <h3>連絡先</h3>
+    <div class="frow">
+      <label class="field"><span class="lab">電話番号</span><input id="lf-tel1" type="tel"></label>
+      <label class="field"><span class="lab">電話番号2 <span class="opt">（任意）</span></span><input id="lf-tel2" type="tel"></label>
+    </div>
+    <label class="field"><span class="lab">メールアドレス <span class="opt">（任意）</span></span><input id="lf-mail" type="email"></label>
+  </div>
+
+  <div class="panel" id="lf-reserve-panel">
+    <h3>予約の管理（満室時）</h3>
+    <p class="setnote" style="margin-bottom:10px">「予約」段階の人だけ使います。空き連絡日を入れると、返信期限などを自動で計算します。</p>
+    <div class="frow">
+      <label class="field"><span class="lab">予約日（リストに入った日）</span><input id="lf-rsvdate" type="date"></label>
+      <label class="field"><span class="lab">空き連絡日（事務局から連絡）</span><input id="lf-notifydate" type="date"></label>
+    </div>
+    <div class="frow">
+      <label class="field"><span class="lab">返信あった日</span><input id="lf-replieddate" type="date"></label>
+      <label class="field"><span class="lab">体験日程きまった日</span><input id="lf-scheduleddate" type="date"></label>
+    </div>
+    <label class="field"><span class="lab">体験スタート予定日 <span class="opt">（任意）</span></span><input id="lf-trialdate" type="date"></label>
+    <div id="lf-deadline-view" class="setnote" style="margin-top:4px"></div>
+  </div>
+
+  <div class="panel">
+    <h3>問い合わせの中身</h3>
+    <div class="frow">
+      <label class="field"><span class="lab">問い合わせ日</span><input id="lf-date" type="date"></label>
+      <label class="field"><span class="lab">対応者 <span class="opt">（任意）</span></span><input id="lf-staff" placeholder="例：田中"></label>
+    </div>
+    <div class="frow">
+      <label class="field"><span class="lab">経路 <span class="opt">（任意）</span></span>
+        <select id="lf-route"><option value="">―</option><option>電話</option><option>メール</option><option>来所</option><option>紹介</option><option>その他</option></select>
+      </label>
+      <label class="field"><span class="lab">どこで知った？ <span class="opt">（任意）</span></span><input id="lf-source" placeholder="例：ネット検索、チラシ"></label>
+    </div>
+    <label class="field"><span class="lab">内容 <span class="opt">（任意）</span></span><textarea id="lf-content" placeholder="問い合わせの内容"></textarea></label>
+    <label class="field"><span class="lab">対応 <span class="opt">（任意）</span></span><textarea id="lf-action" placeholder="どう対応したか"></textarea></label>
+    <label class="field"><span class="lab">アフターフォロー <span class="opt">（任意）</span></span><textarea id="lf-follow" placeholder="その後の連絡など"></textarea></label>
+    <label class="field"><span class="lab">次にやること <span class="opt">（カードに大きく出ます）</span></span><input id="lf-next" placeholder="例：資料を送る、折り返し電話"></label>
+  </div>
+
+  <div class="panel">
+    <button class="btn-primary purple" id="lf-save">この問い合わせを保存</button>
+    <button class="btn-delete" id="lf-delete" style="display:none">この問い合わせを消す</button>
+  </div>
+</div>
+
+<!-- ===== 設定 ===== -->
+<div class="wrap" id="settings">
+  <div class="dbar">
+    <button class="back" data-back>← もどる</button>
+    <h2>設定</h2>
+  </div>
+  <div class="panel">
+    <h3>部屋の番号・男女区分</h3>
+    <div id="set-rooms"></div>
+    <button class="btn-primary" id="set-save" style="margin-top:14px">設定を保存</button>
+  </div>
+  <div class="panel">
+    <h3>部屋数</h3>
+    <div class="setrow" style="border:none;padding-top:0">
+      <span style="flex:1">いまの部屋数</span>
+      <input id="set-count" type="number" inputmode="numeric" min="1" max="200" style="flex:0 0 110px;min-height:48px">
+    </div>
+    <p class="setnote" style="margin-bottom:10px">数を増やすと末尾に部屋が足されます。減らすと末尾の部屋が消えます（中の記録ごと）。</p>
+    <button class="btn-primary blue" id="set-count-apply">部屋数を変える</button>
+  </div>
+  <div class="panel">
+    <h3>つなぎ口（共有先）</h3>
+    <p class="setnote" style="margin-bottom:8px">3人で共有するための保存先（GASのURL）です。乗り換えるときはここだけ変えます。</p>
+    <label class="field"><input id="set-endpoint" placeholder="https://script.google.com/macros/s/..../exec"></label>
+    <button class="btn-primary blue" id="set-endpoint-save">つなぎ口を保存して再読み込み</button>
+  </div>
+  <div class="panel">
+    <h3>こまったとき</h3>
+    <div class="danger-zone">
+      <p>すべての部屋を空室にもどし、記録も消します（共有先のデータも書き換わります）。問い合わせのデータは消えません。元にはもどせません。</p>
+      <button class="btn-danger" id="set-reset">部屋をすべて初期化する</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     つなぎ口（保存先）。乗り換えるときは、ここ1か所だけ変える。
+     ============================================================ */
+  // 保存先（つなぎ口）。GAS配信・PC単体どちらでも、この固定URLに読み書きする。
+  // 乗り換えるときは、ここ1か所だけ変える。
+  var ENDPOINT = "https://script.google.com/macros/s/AKfycbw7PZBWzOOXUTbhYEZ7yc-I1SJHxylrqO8fS5ljznaWXcz4B83-CMQGfYCsmN75fFJP4Q/exec";
+
+  var LS_ROOMS="hub:rooms:backup", LS_LEADS="hub:leads:backup", LS_ENDPOINT="hub:endpoint";
+
+  var STAGES=["問い合わせ","資料送付","見学","予約","体験","入居"];
+
+  /* ---- 通信 ---- */
+  // GAS配信(iframe内)なら google.script.run、単体HTMLなら fetch を使う
+  var USE_GSR = (typeof google!=="undefined" && google.script && google.script.run);
+
+  function gsr(fnName, arg){
+    return new Promise(function(resolve,reject){
+      var runner = google.script.run
+        .withSuccessHandler(function(res){
+          try{ resolve(JSON.parse(res)); }catch(e){ reject(e); }
+        })
+        .withFailureHandler(function(err){ reject(err); });
+      runner[fnName](arg);
+    });
+  }
+
+  var Remote={
+    async loadRooms(){
+      if(USE_GSR){ var d=await gsr("apiGet","rooms"); if(!d||!d.ok)throw 0; return d.rooms||[]; }
+      var r=await fetch(ENDPOINT+"?kind=rooms"); var d2=await r.json(); if(!d2||!d2.ok)throw 0; return d2.rooms||[];
+    },
+    async loadLeads(){
+      if(USE_GSR){ var d=await gsr("apiGet","leads"); if(!d||!d.ok)throw 0; return d.leads||[]; }
+      var r=await fetch(ENDPOINT+"?kind=leads"); var d2=await r.json(); if(!d2||!d2.ok)throw 0; return d2.leads||[];
+    },
+    async saveRooms(list){
+      if(USE_GSR){ var d=await gsr("apiSave",JSON.stringify({rooms:list})); if(!d||!d.ok)throw 0; return; }
+      var r=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({rooms:list})}); var d2=await r.json(); if(!d2||!d2.ok)throw 0;
+    },
+    async saveLeads(list){
+      if(USE_GSR){ var d=await gsr("apiSave",JSON.stringify({leads:list})); if(!d||!d.ok)throw 0; return; }
+      var r=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({leads:list})}); var d2=await r.json(); if(!d2||!d2.ok)throw 0;
+    }
+  };
+  var Local={
+    async get(k){ try{ if(!window.storage)return null; var r=await window.storage.get(k); return r&&r.value?JSON.parse(r.value):null; }catch(e){ return null; } },
+    async set(k,v){ try{ if(!window.storage)return; await window.storage.set(k,JSON.stringify(v)); }catch(e){} }
+  };
+
+  /* ---- 状態 ---- */
+  var rooms=[], leads=[];
+  var filter="all", mainTab="rooms";
+  var current=null, curLead=null;
+
+  function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+  function todayStr(){ var d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+  function fmt(s){ if(!s)return""; var p=s.split("-"); if(p.length!==3)return s; var w=["日","月","火","水","木","金","土"][new Date(+p[0],+p[1]-1,+p[2]).getDay()]; return (+p[1])+"/"+(+p[2])+"("+w+")"; }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+
+  var ST={occupied:"入居中",vacant:"空室",cleaning:"清掃中",work:"工事中"};
+  var SEX={"":"",male:"男性用",female:"女性用"};
+  function defaults(){ var a=[]; for(var i=1;i<=24;i++){ a.push({id:uid(),no:i+"号室",sex:"",status:"vacant",tenant:"",movein:"",memo:"",logs:[]}); } return a; }
+
+  /* ---- 同期バー ---- */
+  var syncbar=document.getElementById("syncbar");
+  function sync(kind,msg,withRetry){
+    syncbar.className="syncbar "+kind;
+    syncbar.innerHTML='<span>'+(kind==="busy"?'<span class="spin"></span> ':'')+esc(msg)+'</span>'+(withRetry?'<button class="retry" id="sync-retry">もう一度</button>':'');
+    if(withRetry){ var b=document.getElementById("sync-retry"); if(b)b.addEventListener("click",reloadAll); }
+  }
+
+  /* ---- 読み込み ---- */
+  async function reloadAll(){
+    sync("busy","共有先から読み込み中…");
+    try{
+      var got=await Promise.all([Remote.loadRooms(),Remote.loadLeads()]);
+      rooms=got[0]; leads=got[1];
+      if(!rooms.length){ rooms=defaults(); await Remote.saveRooms(rooms); }
+      rooms.forEach(function(r){ r.logs=r.logs||[]; if(r.sex===undefined)r.sex=""; });
+      leads.forEach(function(l){ if(!l.stage||STAGES.indexOf(l.stage)<0)l.stage=STAGES[0]; });
+      await Local.set(LS_ROOMS,rooms); await Local.set(LS_LEADS,leads);
+      renderAll();
+      sync("idle","共有OK（みんなと同じデータ）");
+    }catch(e){
+      var br=await Local.get(LS_ROOMS), bl=await Local.get(LS_LEADS);
+      if(br)rooms=br; if(bl)leads=bl;
+      renderAll();
+      sync("err","共有先につながりません。控えを表示中。",true);
+    }
+  }
+
+  /* ---- 保存 ---- */
+  async function pushRooms(){
+    await Local.set(LS_ROOMS,rooms);
+    sync("busy","共有先に保存中…");
+    try{ await Remote.saveRooms(rooms); sync("idle","保存しました（3人に反映）"); }
+    catch(e){ sync("err","保存できませんでした。電波を確かめて、もう一度。",true); }
+  }
+  async function pushLeads(){
+    await Local.set(LS_LEADS,leads);
+    sync("busy","共有先に保存中…");
+    try{ await Remote.saveLeads(leads); sync("idle","保存しました（3人に反映）"); }
+    catch(e){ sync("err","保存できませんでした。電波を確かめて、もう一度。",true); }
+  }
+
+  /* ---- 描画 ---- */
+  function renderAll(){ renderBoard(); renderLeads(); }
+
+  var grid=document.getElementById("grid");
+  function renderBoard(){
+    var c={occupied:0,vacant:0,cleaning:0,work:0};
+    rooms.forEach(function(r){ c[r.status]=(c[r.status]||0)+1; });
+    var total=rooms.length||1;
+    document.getElementById("sumbar").innerHTML=
+      '<i class="s-occ" style="width:'+(c.occupied/total*100)+'%"></i>'+
+      '<i class="s-cln" style="width:'+(c.cleaning/total*100)+'%"></i>'+
+      '<i class="s-wrk" style="width:'+(c.work/total*100)+'%"></i>';
+    document.getElementById("sumlabels").innerHTML=
+      '<span class="legend"><span class="sw" style="background:var(--occ)"></span>入居 <b>'+c.occupied+'</b></span>'+
+      '<span class="legend"><span class="sw" style="background:var(--vac)"></span>空き <b>'+c.vacant+'</b></span>'+
+      '<span class="legend"><span class="sw" style="background:var(--cln)"></span>清掃 <b>'+c.cleaning+'</b></span>'+
+      '<span class="legend"><span class="sw" style="background:var(--wrk)"></span>工事 <b>'+c.work+'</b></span>'+
+      '<span class="legend">ぜんぶで <b>'+rooms.length+'</b> 室</span>';
+    var list=filter==="all"?rooms:rooms.filter(function(r){return r.status===filter;});
+    grid.innerHTML=list.map(function(r){
+      var n=r.logs.length;
+      var sex=r.sex?'<span class="sexbadge '+r.sex+'">'+SEX[r.sex]+'</span>':'';
+      return '<button class="room '+r.status+'" data-id="'+r.id+'">'+
+        '<div class="no">'+esc(r.no)+'<span class="tag">'+ST[r.status]+'</span></div>'+
+        '<div class="who'+(r.tenant?'':' empty')+'">'+(r.tenant?esc(r.tenant):'空室')+'</div>'+
+        '<div class="foot">'+sex+(n?'<span>📝 '+n+'件</span>':'')+'</div>'+
+      '</button>';
+    }).join("");
+  }
+
+  /* ---- 予約の期限計算 ---- */
+  function addDays(dateStr,n){ var p=dateStr.split("-"); var d=new Date(+p[0],+p[1]-1,+p[2]); d.setDate(d.getDate()+n); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+  function daysUntil(dateStr){ var p=dateStr.split("-"); var d=new Date(+p[0],+p[1]-1,+p[2]); var t=new Date(); t.setHours(0,0,0,0); return Math.round((d-t)/86400000); }
+
+  // 予約管理の警告：{cls:"over"|"soon"|"ok", text} か null
+  function reserveWarn(l){
+    if(l.stage!=="予約") return null;
+    if(!l.notifydate){ return l.rsvdate?{cls:"ok",text:"空き待ち（予約 "+fmt(l.rsvdate)+"）"}:null; }
+    if(!l.replieddate){
+      var d1=daysUntil(addDays(l.notifydate,1));
+      if(d1<0)return{cls:"over",text:"⚠ 返信期限すぎ（連絡 "+fmt(l.notifydate)+"）"};
+      return{cls:"soon",text:"返信待ち：きょう明日が期限"};
+    }
+    if(!l.scheduleddate){
+      var d7=daysUntil(addDays(l.notifydate,7));
+      if(d7<0)return{cls:"over",text:"⚠ 日程連絡の期限すぎ"};
+      if(d7<=2)return{cls:"soon",text:"日程連絡：あと"+d7+"日"};
+      return{cls:"ok",text:"日程待ち（あと"+d7+"日）"};
+    }
+    var d30=daysUntil(addDays(l.notifydate,30));
+    var d60=daysUntil(addDays(l.notifydate,60));
+    if(d60<0)return{cls:"over",text:"⚠ お取り置き上限（60日）すぎ"};
+    if(d30<0)return{cls:"over",text:"⚠ 30日すぎ：有料お取り置き中（〜あと"+d60+"日）"};
+    if(d30<=5)return{cls:"soon",text:"体験スタート期限まであと"+d30+"日"};
+    return{cls:"ok",text:"体験スタートまであと"+d30+"日"};
+  }
+
+  var leadStage = STAGES[0]; // いま見ている段階
+
+  function renderLeads(){
+    // 段階ボタン（件数と警告つき）
+    var btns=document.getElementById("stage-btns");
+    btns.innerHTML=STAGES.map(function(st){
+      var items=leads.filter(function(l){return l.stage===st;});
+      var hasOver=items.some(function(l){ var w=reserveWarn(l); return w&&w.cls==="over"; });
+      return '<button class="stagebtn'+(hasOver?' has-warn':'')+'" data-stage="'+st+'" aria-pressed="'+(st===leadStage?"true":"false")+'">'+
+        '<span class="scnt">'+items.length+'</span>'+st+(hasOver?'<span class="swarn">⚠期限すぎあり</span>':'')+
+      '</button>';
+    }).join("");
+    btns.querySelectorAll(".stagebtn").forEach(function(b){
+      b.addEventListener("click",function(){ leadStage=b.dataset.stage; renderLeads(); });
+    });
+
+    // 選んだ段階のカードを縦に一覧
+    var list=document.getElementById("lead-list");
+    var items=leads.filter(function(l){return l.stage===leadStage;});
+    if(leadStage==="予約"){ items=items.slice().sort(function(a,b){ return (a.rsvdate||"9999")<(b.rsvdate||"9999")?-1:1; }); }
+    if(!items.length){ list.innerHTML='<div class="stage-empty">「'+leadStage+'」の人は、いまいません。</div>'; return; }
+    list.innerHTML=items.map(function(l,idx){
+      var from=l.fromtype==="ご本人"?"ご本人から":esc(l.fromtype||"")+(l.fromname?"："+esc(l.fromname):"");
+      var w=reserveWarn(l);
+      var cls="lead"+(w&&w.cls==="over"?" warn-over":w&&w.cls==="soon"?" warn-soon":"");
+      return '<button class="'+cls+'" data-lead="'+l.id+'">'+
+        (leadStage==="予約"?'<span class="lorder">予約 '+(idx+1)+'番</span>':'')+
+        '<div class="lname">'+esc(l.name||"（名前なし）")+'</div>'+
+        '<div class="lfrom">'+from+(l.date?'　'+fmt(l.date):'')+'</div>'+
+        (w?'<span class="lwarn '+w.cls+'">'+esc(w.text)+'</span>':'')+
+        (l.next?'<div class="lnext">▶ '+esc(l.next)+'</div>':'')+
+      '</button>';
+    }).join("");
+  }
+
+  /* ---- 画面切替 ---- */
+  var screens={main:document.getElementById("main"),detail:document.getElementById("detail"),leadform:document.getElementById("leadform"),settings:document.getElementById("settings")};
+  function show(which){
+    Object.keys(screens).forEach(function(k){ screens[k].style.display=k===which?"block":"none"; });
+    document.getElementById("fab-lead").style.display=(which==="main"&&mainTab==="leads")?"flex":"none";
+    window.scrollTo(0,0);
+  }
+  function switchMainTab(t){
+    mainTab=t;
+    document.querySelectorAll(".maintab").forEach(function(b){ b.setAttribute("aria-selected", b.dataset.mt===t?"true":"false"); });
+    document.getElementById("tab-rooms").style.display=t==="rooms"?"block":"none";
+    document.getElementById("tab-leads").style.display=t==="leads"?"block":"none";
+    document.getElementById("fab-lead").style.display=t==="leads"?"flex":"none";
+  }
+
+  /* ---- 部屋詳細 ---- */
+  function openDetail(id){
+    current=rooms.find(function(r){return r.id===id;});
+    if(!current)return;
+    var sex=current.sex?'<span class="sexbadge '+current.sex+'">'+SEX[current.sex]+'</span>':'';
+    document.getElementById("d-title").innerHTML=esc(current.no)+sex;
+    document.getElementById("d-tenant").value=current.tenant||"";
+    document.getElementById("d-movein").value=current.movein||"";
+    document.getElementById("d-memo").value=current.memo||"";
+    document.querySelectorAll("#d-status button").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.s===current.status?"true":"false"); });
+    document.getElementById("l-date").value=todayStr();
+    document.getElementById("l-text").value="";
+    renderRoomLogs();
+    show("detail");
+  }
+  function renderRoomLogs(){
+    var box=document.getElementById("d-logs");
+    if(!current.logs.length){ box.innerHTML='<div class="log-empty">まだ記録はありません。下から追加できます。</div>'; return; }
+    var sorted=current.logs.slice().sort(function(a,b){return a.date<b.date?1:-1;});
+    box.innerHTML=sorted.map(function(l){
+      return '<div class="log"><div class="ldate">'+fmt(l.date)+'</div><div class="ltext">'+esc(l.text)+'</div>'+
+        '<button class="ldel" data-del="'+l.id+'">この記録を消す</button></div>';
+    }).join("");
+  }
+  function saveRoom(){
+    if(!current)return;
+    current.tenant=document.getElementById("d-tenant").value.trim();
+    current.movein=document.getElementById("d-movein").value;
+    current.memo=document.getElementById("d-memo").value.trim();
+    var picked=document.querySelector('#d-status button[aria-pressed="true"]');
+    if(picked)current.status=picked.dataset.s;
+    renderBoard(); pushRooms();
+    flash(document.getElementById("d-save"),"保存しました ✓");
+  }
+  function addRoomLog(){
+    if(!current)return;
+    var text=document.getElementById("l-text").value.trim();
+    if(!text){ alert("内容を入れてください。"); return; }
+    current.logs.push({id:uid(),date:document.getElementById("l-date").value||todayStr(),text:text});
+    document.getElementById("l-text").value=""; document.getElementById("l-date").value=todayStr();
+    renderRoomLogs(); renderBoard(); pushRooms();
+  }
+  function delRoomLog(id){
+    if(!confirm("この記録を消します。よろしいですか？"))return;
+    current.logs=current.logs.filter(function(x){return x.id!==id;});
+    renderRoomLogs(); renderBoard(); pushRooms();
+  }
+
+  /* ---- 問い合わせ詳細 ---- */
+  function openLead(id){
+    curLead=id?leads.find(function(l){return l.id===id;}):null;
+    var L=curLead||{};
+    document.getElementById("lf-title").textContent=curLead?(L.name||"問い合わせ"):"新しい問い合わせ";
+    document.getElementById("lf-delete").style.display=curLead?"block":"none";
+    // 段階ピッカー
+    var sp=document.getElementById("lf-stage");
+    var cur=L.stage||STAGES[0];
+    sp.innerHTML=STAGES.map(function(s){ return '<button data-stage="'+s+'" aria-pressed="'+(s===cur?"true":"false")+'">'+s+'</button>'; }).join("");
+    sp.querySelectorAll("button").forEach(function(b){
+      b.addEventListener("click",function(){ sp.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed","false");}); b.setAttribute("aria-pressed","true"); });
+    });
+    // 各欄
+    setv("lf-name",L.name); setv("lf-sex",L.sex); setv("lf-age",L.age); setv("lf-addr",L.addr);
+    setv("lf-fromtype",L.fromtype||"ご本人"); setv("lf-fromname",L.fromname); setv("lf-relation",L.relation);
+    setv("lf-tel1",L.tel1); setv("lf-tel2",L.tel2); setv("lf-mail",L.mail);
+    setv("lf-date",L.date||todayStr()); setv("lf-staff",L.staff); setv("lf-route",L.route); setv("lf-source",L.source);
+    setv("lf-content",L.content); setv("lf-action",L.action); setv("lf-follow",L.follow); setv("lf-next",L.next);
+    setv("lf-rsvdate",L.rsvdate); setv("lf-notifydate",L.notifydate); setv("lf-replieddate",L.replieddate);
+    setv("lf-scheduleddate",L.scheduleddate); setv("lf-trialdate",L.trialdate);
+    updateDeadlineView();
+    ["lf-rsvdate","lf-notifydate","lf-replieddate","lf-scheduleddate"].forEach(function(id){
+      var el=document.getElementById(id);
+      el.oninput=updateDeadlineView;
+    });
+    show("leadform");
+  }
+  function setv(id,v){ document.getElementById(id).value=v==null?"":v; }
+  function updateDeadlineView(){
+    var box=document.getElementById("lf-deadline-view");
+    if(!box)return;
+    var nd=getv("lf-notifydate");
+    if(!nd){ box.textContent="空き連絡日を入れると、期限を自動計算して表示します。"; return; }
+    box.innerHTML="📅 返信期限：<b>"+fmt(addDays(nd,1))+"</b>　日程連絡：<b>"+fmt(addDays(nd,7))+"</b>まで　体験スタート：<b>"+fmt(addDays(nd,30))+"</b>まで（以降は有料お取り置き）　上限：<b>"+fmt(addDays(nd,60))+"</b>";
+  }
+  function getv(id){ return document.getElementById(id).value.trim(); }
+
+  function saveLead(){
+    var name=getv("lf-name");
+    if(!name){ alert("ご本人氏名を入れてください。"); return; }
+    var stageBtn=document.querySelector('#lf-stage button[aria-pressed="true"]');
+    var rec={
+      id:curLead?curLead.id:uid(),
+      stage:stageBtn?stageBtn.dataset.stage:STAGES[0],
+      name:name, sex:getv("lf-sex"), age:getv("lf-age"), addr:getv("lf-addr"),
+      fromtype:getv("lf-fromtype"), fromname:getv("lf-fromname"), relation:getv("lf-relation"),
+      tel1:getv("lf-tel1"), tel2:getv("lf-tel2"), mail:getv("lf-mail"),
+      date:getv("lf-date"), staff:getv("lf-staff"), route:getv("lf-route"), source:getv("lf-source"),
+      content:getv("lf-content"), action:getv("lf-action"), follow:getv("lf-follow"), next:getv("lf-next"),
+      rsvdate:getv("lf-rsvdate"), notifydate:getv("lf-notifydate"), replieddate:getv("lf-replieddate"),
+      scheduleddate:getv("lf-scheduleddate"), trialdate:getv("lf-trialdate")
+    };
+    var i=leads.findIndex(function(x){return x.id===rec.id;});
+    if(i>=0)leads[i]=rec; else leads.push(rec);
+    renderLeads(); pushLeads();
+    show("main"); switchMainTab("leads");
+  }
+  function deleteLead(){
+    if(!curLead)return;
+    if(!confirm("「"+(curLead.name||"この問い合わせ")+"」を消します。よろしいですか？"))return;
+    leads=leads.filter(function(x){return x.id!==curLead.id;});
+    renderLeads(); pushLeads();
+    show("main"); switchMainTab("leads");
+  }
+
+  /* ---- 設定 ---- */
+  function openSettings(){
+    var box=document.getElementById("set-rooms");
+    box.innerHTML=rooms.map(function(r){
+      return '<div class="setrow" data-id="'+r.id+'">'+
+        '<div class="rno"><input class="s-no" value="'+esc(r.no)+'" aria-label="部屋番号"></div>'+
+        '<div class="rsex"><select class="s-sex" aria-label="男女区分">'+
+          '<option value=""'+(r.sex===""?" selected":"")+'>区分なし</option>'+
+          '<option value="male"'+(r.sex==="male"?" selected":"")+'>男性用</option>'+
+          '<option value="female"'+(r.sex==="female"?" selected":"")+'>女性用</option>'+
+        '</select></div>'+
+      '</div>';
+    }).join("");
+    document.getElementById("set-count").value=rooms.length;
+    document.getElementById("set-endpoint").value=ENDPOINT;
+    show("settings");
+  }
+  function saveSettings(){
+    document.querySelectorAll("#set-rooms .setrow").forEach(function(row){
+      var r=rooms.find(function(x){return x.id===row.dataset.id;});
+      if(!r)return;
+      var no=row.querySelector(".s-no").value.trim(); if(no)r.no=no;
+      r.sex=row.querySelector(".s-sex").value;
+    });
+    renderBoard(); pushRooms();
+    flash(document.getElementById("set-save"),"保存しました ✓");
+  }
+  function applyCount(){
+    var n=parseInt(document.getElementById("set-count").value,10);
+    if(!n||n<1){ alert("1以上の数を入れてください。"); return; }
+    if(n>200){ alert("多すぎます。200以下にしてください。"); return; }
+    if(n<rooms.length){ if(!confirm("末尾の部屋を"+(rooms.length-n)+"室、記録ごと消します。よろしいですか？"))return; rooms=rooms.slice(0,n); }
+    else if(n>rooms.length){ for(var k=rooms.length+1;k<=n;k++){ rooms.push({id:uid(),no:k+"号室",sex:"",status:"vacant",tenant:"",movein:"",memo:"",logs:[]}); } }
+    openSettings(); renderBoard(); pushRooms();
+  }
+  function saveEndpoint(){
+    var url=document.getElementById("set-endpoint").value.trim();
+    if(!url){ alert("URLを入れてください。"); return; }
+    ENDPOINT=url; Local.set(LS_ENDPOINT,url);
+    show("main"); reloadAll();
+  }
+  function resetRooms(){
+    if(!confirm("すべての部屋を空室にもどし、記録も消します。問い合わせデータは残ります。よろしいですか？"))return;
+    if(!confirm("ほんとうに消しますか？ もう一度だけ確認します。"))return;
+    rooms=defaults(); renderBoard(); pushRooms(); show("main");
+  }
+  function flash(btn,msg){ var old=btn.textContent; btn.textContent=msg; btn.style.opacity=".7"; setTimeout(function(){ btn.textContent=old; btn.style.opacity="1"; },1200); }
+
+  /* ---- イベント ---- */
+  document.querySelectorAll(".maintab").forEach(function(b){ b.addEventListener("click",function(){ switchMainTab(b.dataset.mt); }); });
+  grid.addEventListener("click",function(e){ var b=e.target.closest(".room"); if(b)openDetail(b.dataset.id); });
+  document.getElementById("lead-list").addEventListener("click",function(e){ var b=e.target.closest(".lead"); if(b)openLead(b.dataset.lead); });
+  document.getElementById("fab-lead").addEventListener("click",function(){ openLead(null); });
+  document.querySelectorAll("[data-back]").forEach(function(b){ b.addEventListener("click",function(){ show("main"); current=null; curLead=null; }); });
+  document.getElementById("open-settings").addEventListener("click",openSettings);
+  document.getElementById("d-save").addEventListener("click",saveRoom);
+  document.getElementById("l-add").addEventListener("click",addRoomLog);
+  document.getElementById("d-logs").addEventListener("click",function(e){ var d=e.target.closest("[data-del]"); if(d)delRoomLog(d.dataset.del); });
+  document.getElementById("lf-save").addEventListener("click",saveLead);
+  document.getElementById("lf-delete").addEventListener("click",deleteLead);
+  document.getElementById("set-save").addEventListener("click",saveSettings);
+  document.getElementById("set-count-apply").addEventListener("click",applyCount);
+  document.getElementById("set-endpoint-save").addEventListener("click",saveEndpoint);
+  document.getElementById("set-reset").addEventListener("click",resetRooms);
+  document.querySelectorAll("#d-status button").forEach(function(b){
+    b.addEventListener("click",function(){ document.querySelectorAll("#d-status button").forEach(function(x){x.setAttribute("aria-pressed","false");}); b.setAttribute("aria-pressed","true"); });
+  });
+  document.querySelectorAll("#filters .chip").forEach(function(c){
+    c.addEventListener("click",function(){ filter=c.dataset.f; document.querySelectorAll("#filters .chip").forEach(function(x){x.setAttribute("aria-pressed", x===c?"true":"false");}); renderBoard(); });
+  });
+
+  /* ---- 起動 ---- */
+  (async function init(){
+    var saved=await Local.get(LS_ENDPOINT); if(saved)ENDPOINT=saved;
+    reloadAll();
+  })();
+})();
+
+</script>
+</body>
+</html>
