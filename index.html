@@ -15,6 +15,7 @@
     --vac:#8A968F;  --vac-bg:#EFF1F0;
     --cln:#2E5E97;  --cln-bg:#E4ECF6;
     --wrk:#B5780F;  --wrk-bg:#FBEFD7;
+    --away:#7A6CA8; --away-bg:#ECE8F4;
     --male:#3A6EA5; --male-bg:#E7EEF4;
     --female:#9C5577; --female-bg:#F6E9EE;
     --lead:#6B4E9B; --lead-bg:#EDE7F5;
@@ -145,6 +146,9 @@
   .status-pick button[aria-pressed="true"][data-s="vacant"]{background:var(--vac-bg);color:var(--vac);border-color:var(--vac);}
   .status-pick button[aria-pressed="true"][data-s="cleaning"]{background:var(--cln-bg);color:var(--cln);border-color:var(--cln);}
   .status-pick button[aria-pressed="true"][data-s="work"]{background:var(--wrk-bg);color:var(--wrk);border-color:var(--wrk);}
+  .status-pick button[aria-pressed="true"][data-s="away"]{background:var(--away-bg);color:var(--away);border-color:var(--away);}
+  .room.away{border-top-color:var(--away);} .room.away .tag{background:var(--away-bg);color:var(--away);}
+  .room .due{font-size:11px;font-weight:700;color:var(--wrk);background:var(--wrk-bg);border-radius:8px;padding:1px 7px;}
 
   /* 段階ピッカー（リード用） */
   .stage-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
@@ -206,6 +210,7 @@
       <button class="chip" data-f="vacant" aria-pressed="false">空室</button>
       <button class="chip" data-f="cleaning" aria-pressed="false">清掃中</button>
       <button class="chip" data-f="work" aria-pressed="false">工事中</button>
+      <button class="chip" data-f="away" aria-pressed="false">留守</button>
     </div>
     <div class="grid" id="grid"></div>
   </div>
@@ -233,10 +238,15 @@
       <button data-s="vacant">空室</button>
       <button data-s="cleaning">清掃中</button>
       <button data-s="work">工事中</button>
+      <button data-s="away">留守（外泊・一時帰宅）</button>
     </div>
     <div style="height:14px"></div>
     <label class="field"><span class="lab">入居者の名前 <span class="opt">（空室なら空欄）</span></span><input id="d-tenant" placeholder="例：山田さん"></label>
     <label class="field"><span class="lab">入居日 <span class="opt">（任意）</span></span><input id="d-movein" type="date"></label>
+    <div class="row">
+      <label class="field" style="flex:1"><span class="lab">退去予定日 <span class="opt">（決まったら）</span></span><input id="d-moveout" type="date"></label>
+      <label class="field" style="flex:1"><span class="lab">戻り予定日 <span class="opt">（留守のとき）</span></span><input id="d-return" type="date"></label>
+    </div>
     <label class="field"><span class="lab">メモ <span class="opt">（任意）</span></span><textarea id="d-memo" placeholder="部屋の特徴・注意点など"></textarea></label>
     <button class="btn-primary" id="d-save">この部屋を保存</button>
   </div>
@@ -440,7 +450,7 @@
   function fmt(s){ if(!s)return""; var p=s.split("-"); if(p.length!==3)return s; var w=["日","月","火","水","木","金","土"][new Date(+p[0],+p[1]-1,+p[2]).getDay()]; return (+p[1])+"/"+(+p[2])+"("+w+")"; }
   function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
 
-  var ST={occupied:"入居中",vacant:"空室",cleaning:"清掃中",work:"工事中"};
+  var ST={occupied:"入居中",vacant:"空室",cleaning:"清掃中",work:"工事中",away:"留守"};
   var SEX={"":"",male:"男性用",female:"女性用"};
   function defaults(){ var a=[]; for(var i=1;i<=24;i++){ a.push({id:uid(),no:i+"号室",sex:"",status:"vacant",tenant:"",movein:"",memo:"",logs:[]}); } return a; }
 
@@ -491,11 +501,11 @@
 
   var grid=document.getElementById("grid");
   function renderBoard(){
-    var c={occupied:0,vacant:0,cleaning:0,work:0};
+    var c={occupied:0,vacant:0,cleaning:0,work:0,away:0};
     rooms.forEach(function(r){ c[r.status]=(c[r.status]||0)+1; });
     var total=rooms.length||1;
     document.getElementById("sumbar").innerHTML=
-      '<i class="s-occ" style="width:'+(c.occupied/total*100)+'%"></i>'+
+      '<i class="s-occ" style="width:'+((c.occupied+c.away)/total*100)+'%"></i>'+
       '<i class="s-cln" style="width:'+(c.cleaning/total*100)+'%"></i>'+
       '<i class="s-wrk" style="width:'+(c.work/total*100)+'%"></i>';
     document.getElementById("sumlabels").innerHTML=
@@ -503,15 +513,19 @@
       '<span class="legend"><span class="sw" style="background:var(--vac)"></span>空き <b>'+c.vacant+'</b></span>'+
       '<span class="legend"><span class="sw" style="background:var(--cln)"></span>清掃 <b>'+c.cleaning+'</b></span>'+
       '<span class="legend"><span class="sw" style="background:var(--wrk)"></span>工事 <b>'+c.work+'</b></span>'+
+      '<span class="legend"><span class="sw" style="background:var(--away)"></span>留守 <b>'+c.away+'</b></span>'+
       '<span class="legend">ぜんぶで <b>'+rooms.length+'</b> 室</span>';
     var list=filter==="all"?rooms:rooms.filter(function(r){return r.status===filter;});
     grid.innerHTML=list.map(function(r){
       var n=r.logs.length;
       var sex=r.sex?'<span class="sexbadge '+r.sex+'">'+SEX[r.sex]+'</span>':'';
+      var due='';
+      if(r.moveout)due='<span class="due">退去予定 '+fmt(r.moveout)+'</span>';
+      else if(r.status==="away"&&r.return_)due='<span class="due">戻り '+fmt(r.return_)+'</span>';
       return '<button class="room '+r.status+'" data-id="'+r.id+'">'+
         '<div class="no">'+esc(r.no)+'<span class="tag">'+ST[r.status]+'</span></div>'+
         '<div class="who'+(r.tenant?'':' empty')+'">'+(r.tenant?esc(r.tenant):'空室')+'</div>'+
-        '<div class="foot">'+sex+(n?'<span>📝 '+n+'件</span>':'')+'</div>'+
+        '<div class="foot">'+sex+due+(n?'<span>📝 '+n+'件</span>':'')+'</div>'+
       '</button>';
     }).join("");
   }
@@ -601,6 +615,8 @@
     document.getElementById("d-title").innerHTML=esc(current.no)+sex;
     document.getElementById("d-tenant").value=current.tenant||"";
     document.getElementById("d-movein").value=current.movein||"";
+    document.getElementById("d-moveout").value=current.moveout||"";
+    document.getElementById("d-return").value=current.return_||"";
     document.getElementById("d-memo").value=current.memo||"";
     document.querySelectorAll("#d-status button").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.s===current.status?"true":"false"); });
     document.getElementById("l-date").value=todayStr();
@@ -621,11 +637,13 @@
     if(!current)return;
     current.tenant=document.getElementById("d-tenant").value.trim();
     current.movein=document.getElementById("d-movein").value;
+    current.moveout=document.getElementById("d-moveout").value;
+    current.return_=document.getElementById("d-return").value;
     current.memo=document.getElementById("d-memo").value.trim();
     var picked=document.querySelector('#d-status button[aria-pressed="true"]');
     if(picked)current.status=picked.dataset.s;
     renderBoard(); pushRooms();
-    flash(document.getElementById("d-save"),"保存しました ✓");
+    show("main"); switchMainTab("rooms");
   }
   function addRoomLog(){
     if(!current)return;
