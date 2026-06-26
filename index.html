@@ -43,12 +43,13 @@
   .maintab{
     flex:1;min-height:var(--tap);border:2px solid var(--line);border-bottom:none;
     border-radius:16px 16px 0 0;background:var(--surface-soft);color:var(--ink-soft);
-    font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:17px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;gap:8px;
+    font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:15px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:5px;
   }
   .maintab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 -2px 8px rgba(32,48,42,.05);}
   .maintab[aria-selected="true"].t-rooms{color:var(--occ);border-color:var(--occ);}
   .maintab[aria-selected="true"].t-leads{color:var(--lead);border-color:var(--lead);}
+  .maintab[aria-selected="true"].t-grad{color:var(--cln);border-color:var(--cln);}
 
   .syncbar{display:flex;align-items:center;gap:8px;margin:0 16px;padding:8px 12px;border-radius:0 0 12px 12px;font-size:13px;font-weight:700;}
   .syncbar.idle{background:var(--occ-bg);color:var(--occ);}
@@ -242,8 +243,9 @@
   </header>
 
   <div class="maintabs" role="tablist">
-    <button class="maintab t-rooms" role="tab" data-mt="rooms" aria-selected="true">🚪 部屋ボード</button>
-    <button class="maintab t-leads" role="tab" data-mt="leads" aria-selected="false">📋 問い合わせ</button>
+    <button class="maintab t-rooms" role="tab" data-mt="rooms" aria-selected="true">🚪 部屋</button>
+    <button class="maintab t-leads" role="tab" data-mt="leads" aria-selected="false">📋 進行中</button>
+    <button class="maintab t-grad" role="tab" data-mt="grad" aria-selected="false">🎓 卒業・OB</button>
   </div>
   <div class="syncbar idle" id="syncbar"><span id="sync-msg">準備中…</span></div>
   <div class="undobar" id="undobar">
@@ -282,6 +284,11 @@
     </div>
     <div class="stagebtns" id="stage-btns"></div>
     <div class="lead-list" id="lead-list"></div>
+  </div>
+
+  <!-- 卒業生・OB -->
+  <div id="tab-grad" style="display:none">
+    <div class="lead-list" id="grad-list"></div>
   </div>
 </div>
 
@@ -740,7 +747,7 @@
   }
 
   /* ---- 描画 ---- */
-  function renderAll(){ renderBoard(); renderLeads(); }
+  function renderAll(){ renderBoard(); renderLeads(); renderGrad(); }
 
   var grid=document.getElementById("grid");
   function renderBoard(){
@@ -860,32 +867,10 @@
         '<span class="scnt">'+items.length+'</span>'+st+(hasOver?'<span class="swarn">⚠期限すぎあり</span>':'')+
       '</button>';
     }).join("");
-    // 卒業生（アーカイブ）枠
-    var gradItems=leads.filter(function(l){return l.stage===GRAD;});
-    btnHTML+='<button class="stagebtn grad" data-stage="'+GRAD+'" aria-pressed="'+(leadStage===GRAD?"true":"false")+'">'+
-      '<span class="scnt">'+gradItems.length+'</span>🎓卒業生</button>';
     btns.innerHTML=btnHTML;
     btns.querySelectorAll(".stagebtn").forEach(function(b){
       b.addEventListener("click",function(){ leadStage=b.dataset.stage; renderLeads(); });
     });
-
-    // 卒業生アーカイブ：分類ごとにグループ表示
-    if(leadStage===GRAD){
-      if(!gradItems.length){ list.innerHTML='<div class="stage-empty">卒業生はまだいません。</div>'; return; }
-      var groups={};
-      sortLeads(gradItems).forEach(function(l){
-        var cate=l.gradwhere||"（分類なし）";
-        (groups[cate]=groups[cate]||[]).push(l);
-      });
-      var html="";
-      Object.keys(groups).forEach(function(cate){
-        html+='<div class="grad-group"><div class="grad-cate">'+esc(cate)+'　<span>'+groups[cate].length+'人</span></div>';
-        html+=groups[cate].map(function(l){ return leadCardHTML(l,null,false); }).join("");
-        html+='</div>';
-      });
-      list.innerHTML=html;
-      return;
-    }
 
     var items=leads.filter(function(l){return l.stage===leadStage;});
     if(leadStage==="予約"){ items=items.slice().sort(function(a,b){ return (a.rsvdate||"9999")<(b.rsvdate||"9999")?-1:1; }); }
@@ -894,6 +879,26 @@
     list.innerHTML=items.map(function(l,idx){
       return leadCardHTML(l, leadStage==="予約"?idx:null, false);
     }).join("");
+  }
+
+  // 卒業・OBタブ：卒業した人を分類（一人暮らし・OB・近隣など）ごとにグループ表示
+  function renderGrad(){
+    var list=document.getElementById("grad-list");
+    if(!list)return;
+    var gradItems=leads.filter(function(l){return l.stage===GRAD;});
+    if(!gradItems.length){ list.innerHTML='<div class="stage-empty">卒業生・OBはまだいません。（問い合わせの段階を「卒業」にすると、ここに移ります）</div>'; return; }
+    var groups={};
+    sortLeads(gradItems).forEach(function(l){
+      var cate=l.gradwhere||"（分類なし）";
+      (groups[cate]=groups[cate]||[]).push(l);
+    });
+    var html="";
+    Object.keys(groups).forEach(function(cate){
+      html+='<div class="grad-group"><div class="grad-cate">'+esc(cate)+'　<span>'+groups[cate].length+'人</span></div>';
+      html+=groups[cate].map(function(l){ return leadCardHTML(l,null,false); }).join("");
+      html+='</div>';
+    });
+    list.innerHTML=html;
   }
 
   /* ---- 画面切替 ---- */
@@ -908,6 +913,7 @@
     document.querySelectorAll(".maintab").forEach(function(b){ b.setAttribute("aria-selected", b.dataset.mt===t?"true":"false"); });
     document.getElementById("tab-rooms").style.display=t==="rooms"?"block":"none";
     document.getElementById("tab-leads").style.display=t==="leads"?"block":"none";
+    document.getElementById("tab-grad").style.display=t==="grad"?"block":"none";
     document.getElementById("fab-lead").style.display=t==="leads"?"flex":"none";
   }
 
