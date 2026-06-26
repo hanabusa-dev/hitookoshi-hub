@@ -104,6 +104,15 @@
   .stagebtn.has-warn{border-color:var(--danger);}
   .stagebtn .swarn{font-size:10px;font-weight:900;color:var(--danger);}
   .lead-list{display:flex;flex-direction:column;gap:10px;padding:10px 16px 24px;}
+  .lead-tools{display:flex;gap:8px;flex-wrap:wrap;padding:10px 16px 0;}
+  .lead-search{flex:1 1 200px;min-width:0;min-height:46px;border:2px solid var(--line);border-radius:12px;padding:0 14px;font:inherit;font-size:16px;background:var(--surface);color:var(--ink);}
+  .lead-sort{flex:0 0 auto;min-height:46px;border:2px solid var(--line);border-radius:12px;padding:0 10px;font:inherit;font-size:15px;background:var(--surface);color:var(--ink);}
+  .search-hit{font-size:12px;color:var(--ink-soft);padding:2px 16px 0;}
+  .stagebtn.grad[aria-pressed="true"]{background:#EFEAF6;color:#6B4E9B;border-color:#6B4E9B;}
+  .stagebtn.grad[aria-pressed="true"] .scnt{color:#6B4E9B;}
+  .grad-group{margin-bottom:18px;}
+  .grad-cate{font-family:"Zen Maru Gothic",sans-serif;font-weight:900;font-size:15px;color:#6B4E9B;padding:6px 2px;border-bottom:2px solid #EFEAF6;margin-bottom:8px;}
+  .grad-cate span{font-size:13px;font-weight:700;color:var(--ink-soft);}
   .lead{
     background:var(--surface);border:2px solid var(--line);border-left:6px solid var(--lead);
     border-radius:12px;padding:10px 12px;cursor:pointer;text-align:left;font:inherit;color:inherit;
@@ -114,6 +123,15 @@
   .lead .lfrom{font-size:12px;color:var(--ink-soft);margin-top:1px;}
   .lead .lnext{font-size:12px;font-weight:700;color:var(--wrk);background:var(--wrk-bg);border-radius:8px;padding:2px 8px;margin-top:6px;display:inline-block;}
   .stage-empty{font-size:13px;color:var(--ink-soft);text-align:center;padding:10px 4px;}
+  /* 本人タグ（オプション） */
+  .ltags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+  .ltag{font-size:11px;font-weight:700;color:var(--lead);background:var(--lead-bg);border-radius:6px;padding:1px 8px;}
+  .tag-pick{display:flex;flex-wrap:wrap;gap:8px;}
+  .tagchip{min-height:44px;border:2px solid var(--line);background:var(--surface);color:var(--ink-soft);border-radius:99px;font:inherit;font-weight:700;font-size:14px;padding:0 14px;cursor:pointer;}
+  .tagchip.on{background:var(--lead-bg);color:var(--lead);border-color:var(--lead);}
+  .tag-add{display:flex;gap:8px;margin-top:12px;}
+  .tag-add input{flex:1;min-width:0;}
+  .tag-add button{flex:0 0 auto;width:auto;min-height:50px;padding:0 18px;}
 
   .fab{
     position:fixed;left:50%;transform:translateX(-50%);
@@ -138,8 +156,10 @@
   input,select,textarea{width:100%;font:inherit;font-size:17px;padding:11px 13px;border:2px solid var(--line);border-radius:12px;background:var(--surface-soft);color:var(--ink);min-height:var(--tap);}
   textarea{min-height:70px;resize:vertical;}
   input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid var(--cln);outline-offset:2px;}
-  .frow{display:flex;gap:10px;}
-  .frow label.field{flex:1;}
+  .wrap .row{display:flex;gap:10px;flex-wrap:wrap;}
+  .wrap .row label.field{flex:1 1 180px;min-width:0;}
+  .frow{display:flex;gap:10px;flex-wrap:wrap;}
+  .frow label.field{flex:1 1 180px;min-width:0;}
   .status-pick{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
   .status-pick button{min-height:50px;border:2px solid var(--line);background:var(--surface);border-radius:12px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;color:var(--ink-soft);}
   .status-pick button[aria-pressed="true"][data-s="occupied"]{background:var(--occ-bg);color:var(--occ);border-color:var(--occ);}
@@ -161,11 +181,40 @@
   .log .ldel{margin-top:8px;background:none;border:none;color:var(--danger);font:inherit;font-size:13px;font-weight:700;cursor:pointer;padding:4px 0;text-decoration:underline;}
   .log-empty{color:var(--ink-soft);font-size:15px;padding:4px 0 12px;}
   .addlog{border:2px dashed var(--line);border-radius:14px;padding:14px;margin-top:6px;}
-  .addlog .row{display:flex;gap:10px;}
-  .addlog .row label.field{margin-bottom:10px;}
+  .addlog .row{display:flex;gap:10px;flex-wrap:wrap;}
+  .addlog .row label.field{flex:1 1 180px;min-width:0;margin-bottom:10px;}
   .note-photo{font-size:12px;color:var(--ink-soft);margin:0 0 10px;}
 
   .btn-primary{width:100%;min-height:54px;border:none;border-radius:14px;background:var(--occ);color:#fff;font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:17px;cursor:pointer;}
+  /* 画面下に追従する保存バー（毎回一番下までスクロールしなくてよい） */
+  .ov{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:50;display:flex;align-items:flex-end;justify-content:center;}
+  @media(min-width:600px){.ov{align-items:center;}}
+  .ov-box{background:var(--surface);width:100%;max-width:560px;max-height:80vh;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden;}
+  @media(min-width:600px){.ov-box{border-radius:18px;}}
+  .ov-head{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid var(--line);font-size:17px;}
+  .ov-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink-soft);padding:4px 8px;}
+  .ov-list{overflow-y:auto;padding:10px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+  .ov-room{min-height:60px;border:2px solid var(--line);background:var(--surface);border-radius:12px;font:inherit;font-weight:700;cursor:pointer;padding:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--ink);}
+  .ov-room .ovr-sub{font-size:12px;font-weight:600;color:var(--ink-soft);}
+  .ov-room.occ{border-color:var(--occ);background:var(--occ-bg);}
+  .ov-empty{grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:20px;}
+  .savebar{position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 72%,rgba(238,242,240,0));padding:10px 16px max(14px,env(safe-area-inset-bottom));z-index:6;margin:8px -16px 0;}
+  .savebar .btn-primary{box-shadow:0 6px 22px rgba(0,0,0,.18);}
+  .savebar .btn-delete{margin-top:8px;}
+  /* 操作の取り消し（やり直し履歴） */
+  .undobar{display:none;align-items:center;gap:8px;margin:8px 16px 0;padding:8px 10px;border:2px solid var(--line);border-radius:12px;background:var(--surface);}
+  .undobar .ulabel{font-size:13px;font-weight:700;color:var(--ink-soft);flex:1;min-width:0;}
+  .undobar button{min-height:42px;border:2px solid var(--line);background:var(--surface-soft);color:var(--ink);border-radius:10px;font:inherit;font-weight:700;font-size:14px;cursor:pointer;padding:0 12px;flex-shrink:0;}
+  .undobar button:disabled{opacity:.45;cursor:default;}
+  .undobar .u-step{border-color:var(--lead);color:var(--lead);}
+  .undo-list{overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px;}
+  .undo-row{display:flex;align-items:center;gap:10px;width:100%;border:2px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 12px;font:inherit;cursor:pointer;text-align:left;color:var(--ink);}
+  .undo-row:active{transform:scale(.99);}
+  .undo-row .ur-main{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .undo-row .ur-label{font-weight:700;font-size:15px;}
+  .undo-row .ur-time{font-size:12px;color:var(--ink-soft);margin-top:1px;font-variant-numeric:tabular-nums;}
+  .undo-row .ur-go{font-size:13px;font-weight:700;color:var(--lead);white-space:nowrap;}
+  .undo-note{font-size:12px;color:var(--ink-soft);padding:0 14px 14px;line-height:1.6;}
   .btn-primary.purple{background:var(--lead);}
   .btn-primary.blue{background:var(--cln);}
   .btn-delete{width:100%;margin-top:12px;min-height:50px;border:2px solid var(--danger-bg);background:var(--danger-bg);color:var(--danger);border-radius:12px;font:inherit;font-weight:700;cursor:pointer;}
@@ -197,6 +246,11 @@
     <button class="maintab t-leads" role="tab" data-mt="leads" aria-selected="false">📋 問い合わせ</button>
   </div>
   <div class="syncbar idle" id="syncbar"><span id="sync-msg">準備中…</span></div>
+  <div class="undobar" id="undobar">
+    <span class="ulabel" id="undo-label">戻せる変更はまだありません</span>
+    <button class="u-step" id="undo-step" type="button" disabled>↩ 1つ戻す</button>
+    <button id="undo-open" type="button" disabled>🕘 履歴</button>
+  </div>
 
   <!-- 部屋ボード -->
   <div id="tab-rooms">
@@ -217,6 +271,15 @@
 
   <!-- 問い合わせボード -->
   <div id="tab-leads" style="display:none">
+    <div class="lead-tools">
+      <input id="lead-search" class="lead-search" type="search" placeholder="🔍 名前で探す（全段階から）">
+      <select id="lead-sort" class="lead-sort">
+        <option value="input">入力順</option>
+        <option value="date-new">問い合わせ日が新しい順</option>
+        <option value="date-old">問い合わせ日が古い順</option>
+        <option value="name">名前順</option>
+      </select>
+    </div>
     <div class="stagebtns" id="stage-btns"></div>
     <div class="lead-list" id="lead-list"></div>
   </div>
@@ -245,10 +308,12 @@
     <label class="field"><span class="lab">入居日 <span class="opt">（任意）</span></span><input id="d-movein" type="date"></label>
     <div class="row">
       <label class="field" style="flex:1"><span class="lab">退去予定日 <span class="opt">（決まったら）</span></span><input id="d-moveout" type="date"></label>
-      <label class="field" style="flex:1"><span class="lab">戻り予定日 <span class="opt">（留守のとき）</span></span><input id="d-return" type="date"></label>
+    </div>
+    <div class="row" id="d-away-row" style="display:none">
+      <label class="field" style="flex:1"><span class="lab">留守 開始日 <span class="opt">（自動・直せます）</span></span><input id="d-awaystart" type="date"></label>
+      <label class="field" style="flex:1"><span class="lab">戻り予定日 <span class="opt">（任意）</span></span><input id="d-return" type="date"></label>
     </div>
     <label class="field"><span class="lab">メモ <span class="opt">（任意）</span></span><textarea id="d-memo" placeholder="部屋の特徴・注意点など"></textarea></label>
-    <button class="btn-primary" id="d-save">この部屋を保存</button>
   </div>
   <div class="panel">
     <h3>できごと・設備の記録</h3>
@@ -262,6 +327,7 @@
       <button class="btn-primary blue" id="l-add">記録を追加する</button>
     </div>
   </div>
+  <div class="savebar"><button class="btn-primary" id="d-save">この部屋を保存</button></div>
 </div>
 
 <!-- ===== 問い合わせ詳細 ===== -->
@@ -276,6 +342,20 @@
     <div class="stage-pick" id="lf-stage"></div>
   </div>
 
+  <div class="panel" id="lf-revisit-panel" style="display:none">
+    <h3>また連絡があった（再来）</h3>
+    <p class="setnote" style="margin-bottom:10px">前に来たことのある人がまた連絡してきたとき。これまでの記録は残したまま、新しい問い合わせとして再スタートします。</p>
+    <button class="btn-primary blue" id="lf-revisit-btn" type="button">また連絡があった（再問い合わせにする）</button>
+  </div>
+
+  <div class="panel" id="lf-room-panel">
+    <h3>お部屋（入居の連動）</h3>
+    <p class="setnote" style="margin-bottom:10px">この人を部屋ボードに入れます。名前・入居日が自動で入り、再入力が要りません。あとで変更・取り消しもできます。</p>
+    <div id="lf-room-status" class="setnote" style="margin-bottom:10px"></div>
+    <button class="btn-primary blue" id="lf-room-btn" type="button">部屋に入れる</button>
+    <button class="btn-delete" id="lf-room-clear" type="button" style="display:none;margin-top:8px">部屋の紐付けを外す（部屋は空室に戻る）</button>
+  </div>
+
   <div class="panel">
     <h3>ご本人のこと</h3>
     <label class="field"><span class="lab">ご本人氏名</span><input id="lf-name" placeholder="例：山田 花子"></label>
@@ -286,6 +366,16 @@
       <label class="field"><span class="lab">年齢 <span class="opt">（任意）</span></span><input id="lf-age" type="number" inputmode="numeric" min="0" max="130"></label>
     </div>
     <label class="field"><span class="lab">住所 <span class="opt">（任意）</span></span><input id="lf-addr"></label>
+  </div>
+
+  <div class="panel">
+    <h3>タグ（オプション）</h3>
+    <p class="setnote" style="margin-bottom:10px">サブスク・追加費用・鍵の貸し出しなど、通常と違う扱いの目印。いくつでも付けられます。</p>
+    <div class="tag-pick" id="lf-tags"></div>
+    <div class="tag-add">
+      <input id="lf-tag-new" placeholder="新しいタグを打って追加">
+      <button class="btn-primary blue" id="lf-tag-add" type="button">追加</button>
+    </div>
   </div>
 
   <div class="panel">
@@ -335,6 +425,10 @@
       <label class="field"><span class="lab">対応者 <span class="opt">（任意）</span></span><input id="lf-staff" placeholder="例：田中"></label>
     </div>
     <div class="frow">
+      <label class="field"><span class="lab">資料を送った日 <span class="opt">（任意）</span></span><input id="lf-sentdate" type="date"></label>
+      <label class="field"><span class="lab">資料の内容 <span class="opt">（任意）</span></span><input id="lf-sentnote" placeholder="例：しおり一式"></label>
+    </div>
+    <div class="frow">
       <label class="field"><span class="lab">経路 <span class="opt">（任意）</span></span>
         <select id="lf-route"><option value="">―</option><option>電話</option><option>メール</option><option>来所</option><option>紹介</option><option>その他</option></select>
       </label>
@@ -346,9 +440,60 @@
     <label class="field"><span class="lab">次にやること <span class="opt">（カードに大きく出ます）</span></span><input id="lf-next" placeholder="例：資料を送る、折り返し電話"></label>
   </div>
 
+  <div class="panel" id="lf-trial-panel">
+    <h3>体験期間</h3>
+    <p class="setnote" style="margin-bottom:10px">体験が始まったら入れてください。別の段階に進むと、記録に「体験：◯〜◯」が残ります。</p>
+    <div class="frow">
+      <label class="field"><span class="lab">体験 開始日 <span class="opt">（自動・直せます）</span></span><input id="lf-trialstart" type="date"></label>
+      <label class="field"><span class="lab">体験 終了日 <span class="opt">（任意）</span></span><input id="lf-trialend" type="date"></label>
+    </div>
+  </div>
+
+  <div class="panel" id="lf-grad-panel" style="display:none">
+    <h3>卒業後のこと</h3>
+    <div class="frow">
+      <label class="field"><span class="lab">卒業日 <span class="opt">（自動・直せます）</span></span><input id="lf-graddate" type="date"></label>
+      <label class="field"><span class="lab">卒業後の分類 <span class="opt">（選ぶ／新しく打つ）</span></span>
+        <input id="lf-gradwhere" list="gradcates" placeholder="例：近隣OB（近隣在住）">
+        <datalist id="gradcates"></datalist>
+      </label>
+    </div>
+    <label class="field"><span class="lab">いまの連絡先・近況 <span class="opt">（任意）</span></span><input id="lf-gradnote" placeholder="例：市内で一人暮らし、ときどき顔出す"></label>
+  </div>
+
   <div class="panel">
+    <h3>ケース記録</h3>
+    <div id="lf-logs"></div>
+    <div class="addlog">
+      <div class="row">
+        <label class="field" style="flex:0 0 150px"><span class="lab">日にち</span><input id="lf-log-date" type="date"></label>
+        <label class="field" style="flex:1"><span class="lab">内容</span><input id="lf-log-text" placeholder="例：面談、電話相談の内容など"></label>
+      </div>
+      <p class="note-photo">※ 写真の添付は次の段階で対応します（今は文字データのみ）。</p>
+      <button class="btn-primary blue" id="lf-log-add">記録を追加する</button>
+    </div>
+  </div>
+
+  <div class="savebar">
     <button class="btn-primary purple" id="lf-save">この問い合わせを保存</button>
     <button class="btn-delete" id="lf-delete" style="display:none">この問い合わせを消す</button>
+  </div>
+</div>
+
+<!-- ===== 部屋選びオーバーレイ ===== -->
+<div id="roompick-ov" class="ov" style="display:none">
+  <div class="ov-box">
+    <div class="ov-head"><b>どのお部屋に入れますか？</b><button class="ov-close" id="roompick-close" type="button">✕</button></div>
+    <div id="roompick-list" class="ov-list"></div>
+  </div>
+</div>
+
+<!-- ===== 取り消し履歴 ===== -->
+<div id="undo-ov" class="ov" style="display:none">
+  <div class="ov-box">
+    <div class="ov-head"><b>変更の履歴（戻したいところを選ぶ）</b><button class="ov-close" id="undo-close" type="button">✕</button></div>
+    <div id="undo-list" class="undo-list"></div>
+    <div class="undo-note">新しい変更が上です。選ぶと、そこまで戻ります（それより後の変更は取り消されます）。<br>※ 戻すと3人みんなの共有データが戻ります。読み込み直すと履歴は消えます。</div>
   </div>
 </div>
 
@@ -400,7 +545,13 @@
 
   var LS_ROOMS="hub:rooms:backup", LS_LEADS="hub:leads:backup", LS_ENDPOINT="hub:endpoint";
 
-  var STAGES=["問い合わせ","資料送付","見学","予約","体験","入居"];
+  var STAGES=["問い合わせ","資料送付","見学","予約","体験","入居","通い参加"];
+  var GRAD="卒業"; // 卒業はアーカイブ扱い
+  var ALL_STAGES=STAGES.concat([GRAD]);
+  // 卒業後の分類（初期値。lf-gradwhereのdatalistに出す。新しい名前も自由に打てる）
+  var GRAD_CATES=["近隣OB（近隣在住）","一人暮らし｜報告あり","一人暮らし｜その他","通い継続","アーカイブ"];
+  // 本人につけるオプションのタグ（初期値）。これまで使われたタグも候補に出し、新しいタグも自由に追加できる。
+  var TAG_PRESETS=["原付携行缶鍵","駐車場","サポート"];
 
   /* ---- 通信 ---- */
   // GAS配信(iframe内)なら google.script.run、単体HTMLなら fetch を使う
@@ -444,9 +595,20 @@
   var rooms=[], leads=[];
   var filter="all", mainTab="rooms";
   var current=null, curLead=null;
+  // 操作の取り消し（履歴）。この端末・このセッションだけで保持し、読み込み直すと消える。
+  var histStack=[], baseline=null, txOpen=false, txEntryPushed=false, pendingLabel="";
+  var HIST_MAX=30;
 
   function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
   function todayStr(){ var d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+  function toggleAwayRow(){
+    var picked=document.querySelector('#d-status button[aria-pressed="true"]');
+    var isAway=picked&&picked.dataset.s==="away";
+    document.getElementById("d-away-row").style.display=isAway?"flex":"none";
+    if(isAway && !document.getElementById("d-awaystart").value){
+      document.getElementById("d-awaystart").value=todayStr(); // 自動で今日
+    }
+  }
   function fmt(s){ if(!s)return""; var p=s.split("-"); if(p.length!==3)return s; var w=["日","月","火","水","木","金","土"][new Date(+p[0],+p[1]-1,+p[2]).getDay()]; return (+p[1])+"/"+(+p[2])+"("+w+")"; }
   function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
 
@@ -470,30 +632,111 @@
       rooms=got[0]; leads=got[1];
       if(!rooms.length){ rooms=defaults(); await Remote.saveRooms(rooms); }
       rooms.forEach(function(r){ r.logs=r.logs||[]; if(r.sex===undefined)r.sex=""; });
-      leads.forEach(function(l){ if(!l.stage||STAGES.indexOf(l.stage)<0)l.stage=STAGES[0]; });
+      leads.forEach(function(l){ if(!l.stage||ALL_STAGES.indexOf(l.stage)<0)l.stage=STAGES[0]; if(!l.tags)l.tags=[]; });
       await Local.set(LS_ROOMS,rooms); await Local.set(LS_LEADS,leads);
       renderAll();
+      initHistory();
       sync("idle","共有OK（みんなと同じデータ）");
     }catch(e){
       var br=await Local.get(LS_ROOMS), bl=await Local.get(LS_LEADS);
       if(br)rooms=br; if(bl)leads=bl;
       renderAll();
+      initHistory();
       sync("err","共有先につながりません。控えを表示中。",true);
     }
   }
 
   /* ---- 保存 ---- */
   async function pushRooms(){
+    commit();
     await Local.set(LS_ROOMS,rooms);
     sync("busy","共有先に保存中…");
     try{ await Remote.saveRooms(rooms); sync("idle","保存しました（3人に反映）"); }
     catch(e){ sync("err","保存できませんでした。電波を確かめて、もう一度。",true); }
   }
   async function pushLeads(){
+    commit();
     await Local.set(LS_LEADS,leads);
     sync("busy","共有先に保存中…");
     try{ await Remote.saveLeads(leads); sync("idle","保存しました（3人に反映）"); }
     catch(e){ sync("err","保存できませんでした。電波を確かめて、もう一度。",true); }
+  }
+
+  /* ============================================================
+     操作の取り消し（やり直し履歴）
+     ・保存(pushRooms/pushLeads)の直前に commit() が走り、変更前の状態を履歴に積む
+     ・mutate(label, fn) で「変更を起こす操作」を包む（ラベル付け＋1操作=1件にまとめる）
+     ・①直前を1つ戻す（stepBack） ②履歴から任意の時点に戻す（restoreIndex）
+     ============================================================ */
+  function snapshotNow(){ return { rooms:JSON.parse(JSON.stringify(rooms)), leads:JSON.parse(JSON.stringify(leads)) }; }
+  function sameState(a,b){ return a&&b&&JSON.stringify(a.rooms)===JSON.stringify(b.rooms)&&JSON.stringify(a.leads)===JSON.stringify(b.leads); }
+  function pushHist(prev,label){
+    histStack.push({label:label||"変更",time:new Date(),rooms:prev.rooms,leads:prev.leads});
+    while(histStack.length>HIST_MAX) histStack.shift();
+  }
+  function commit(){
+    var snap=snapshotNow();
+    if(baseline===null){ baseline=snap; return; }      // 起動直後の基準
+    if(sameState(snap,baseline)) return;                // 中身が変わっていなければ積まない
+    if(txOpen){                                         // 1操作で複数回保存しても履歴は1件
+      if(!txEntryPushed){ pushHist(baseline,pendingLabel); txEntryPushed=true; }
+      baseline=snap; return;
+    }
+    pushHist(baseline,pendingLabel);
+    baseline=snap;
+    renderUndoBar();
+  }
+  function mutate(label,fn){
+    pendingLabel=label; txOpen=true; txEntryPushed=false;
+    try{ fn(); }
+    finally{ txOpen=false; pendingLabel=""; renderUndoBar(); }
+  }
+  function initHistory(){ baseline=snapshotNow(); histStack=[]; renderUndoBar(); }
+  function renderUndoBar(){
+    var bar=document.getElementById("undobar"); if(!bar)return;
+    bar.style.display="flex";
+    var n=histStack.length;
+    document.getElementById("undo-step").disabled=(n===0);
+    document.getElementById("undo-open").disabled=(n===0);
+    document.getElementById("undo-label").textContent = n ? ("戻せる変更："+n+"件（最大"+HIST_MAX+"）") : "戻せる変更はまだありません";
+  }
+  function hhmm(d){ try{ return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0"); }catch(e){ return ""; } }
+  function openUndoList(){
+    if(!histStack.length)return;
+    var rows="";
+    for(var i=histStack.length-1;i>=0;i--){
+      var e=histStack[i];
+      rows+='<button class="undo-row" data-uidx="'+i+'" type="button">'+
+        '<span class="ur-main"><span class="ur-label">'+esc(e.label)+'</span>'+
+        '<span class="ur-time">'+hhmm(e.time)+'</span></span>'+
+        '<span class="ur-go">ここに戻す →</span></button>';
+    }
+    document.getElementById("undo-list").innerHTML=rows;
+    document.getElementById("undo-ov").style.display="flex";
+  }
+  function closeUndoList(){ document.getElementById("undo-ov").style.display="none"; }
+  function stepBack(){
+    if(!histStack.length)return;
+    if(!confirm("直前の変更を取り消します。3人の共有データも戻ります。よろしいですか？"))return;
+    restoreIndex(histStack.length-1);
+  }
+  function restoreIndex(k){
+    if(k<0||k>=histStack.length)return;
+    var entry=histStack[k];
+    rooms=JSON.parse(JSON.stringify(entry.rooms));
+    leads=JSON.parse(JSON.stringify(entry.leads));
+    histStack=histStack.slice(0,k);   // ここから後ろは取り消し（やり直しは無し）
+    baseline=snapshotNow();
+    current=null; curLead=null;
+    renderAll(); renderUndoBar();
+    show("main");
+    restorePersist();
+  }
+  async function restorePersist(){
+    await Local.set(LS_ROOMS,rooms); await Local.set(LS_LEADS,leads);
+    sync("busy","元に戻しています…");
+    try{ await Remote.saveRooms(rooms); await Remote.saveLeads(leads); sync("idle","元に戻しました（3人に反映）"); }
+    catch(e){ sync("err","戻したけど共有先に保存できませんでした。電波を確かめて、もう一度。",true); }
   }
 
   /* ---- 描画 ---- */
@@ -558,37 +801,98 @@
   }
 
   var leadStage = STAGES[0]; // いま見ている段階
+  var leadSearch = ""; // 検索キーワード（氏名）
+  var leadSort = "input"; // 並び順
+
+  function sortLeads(arr){
+    var a=arr.slice();
+    if(leadSort==="date-new") a.sort(function(x,y){return (y.date||"")<(x.date||"")?-1:1;});
+    else if(leadSort==="date-old") a.sort(function(x,y){return (x.date||"")<(y.date||"")?-1:1;});
+    else if(leadSort==="name") a.sort(function(x,y){return (x.name||"")<(y.name||"")?-1:1;});
+    return a;
+  }
+
+  // 候補に出すタグ＝初期タグ＋これまで使われたタグ（重複除去）
+  function allTags(){
+    var used=[];
+    leads.forEach(function(l){ (l.tags||[]).forEach(function(t){ if(t)used.push(t); }); });
+    return TAG_PRESETS.concat(used).filter(function(v,i,a){ return v && a.indexOf(v)===i; });
+  }
+
+  function leadCardHTML(l,idx,showStageTag){
+    var from=l.fromtype==="ご本人"?"ご本人から":esc(l.fromtype||"")+(l.fromname?"："+esc(l.fromname):"");
+    var w=reserveWarn(l);
+    var cls="lead"+(w&&w.cls==="over"?" warn-over":w&&w.cls==="soon"?" warn-soon":"");
+    var tags=(l.tags||[]);
+    var tagHTML=tags.length?'<div class="ltags">'+tags.map(function(t){return '<span class="ltag">'+esc(t)+'</span>';}).join("")+'</div>':'';
+    return '<button class="'+cls+'" data-lead="'+l.id+'">'+
+      (idx!=null?'<span class="lorder">予約 '+(idx+1)+'番</span>':'')+
+      (showStageTag?'<span class="lstagetag">'+esc(l.stage)+'</span>':'')+
+      '<div class="lname">'+esc(l.name||"（名前なし）")+'</div>'+
+      '<div class="lfrom">'+from+(l.date?'　'+fmt(l.date):'')+'</div>'+
+      tagHTML+
+      (w?'<span class="lwarn '+w.cls+'">'+esc(w.text)+'</span>':'')+
+      (l.next?'<div class="lnext">▶ '+esc(l.next)+'</div>':'')+
+    '</button>';
+  }
 
   function renderLeads(){
-    // 段階ボタン（件数と警告つき）
     var btns=document.getElementById("stage-btns");
-    btns.innerHTML=STAGES.map(function(st){
+    var list=document.getElementById("lead-list");
+    var kw=leadSearch.trim();
+
+    // 検索モード：全段階から氏名で絞り込み、段階ボタンは隠す
+    if(kw){
+      btns.style.display="none";
+      var hits=sortLeads(leads.filter(function(l){ return (l.name||"").indexOf(kw)>=0; }));
+      if(!hits.length){ list.innerHTML='<div class="stage-empty">「'+esc(kw)+'」に合う人はいません。</div>'; return; }
+      list.innerHTML='<div class="search-hit">「'+esc(kw)+'」の検索結果：'+hits.length+'件</div>'+
+        hits.map(function(l){ return leadCardHTML(l,null,true); }).join("");
+      return;
+    }
+
+    // 通常モード：段階ボタン（最後に「卒業生」アーカイブ枠）＋一覧
+    btns.style.display="grid";
+    var btnHTML=STAGES.map(function(st){
       var items=leads.filter(function(l){return l.stage===st;});
       var hasOver=items.some(function(l){ var w=reserveWarn(l); return w&&w.cls==="over"; });
       return '<button class="stagebtn'+(hasOver?' has-warn':'')+'" data-stage="'+st+'" aria-pressed="'+(st===leadStage?"true":"false")+'">'+
         '<span class="scnt">'+items.length+'</span>'+st+(hasOver?'<span class="swarn">⚠期限すぎあり</span>':'')+
       '</button>';
     }).join("");
+    // 卒業生（アーカイブ）枠
+    var gradItems=leads.filter(function(l){return l.stage===GRAD;});
+    btnHTML+='<button class="stagebtn grad" data-stage="'+GRAD+'" aria-pressed="'+(leadStage===GRAD?"true":"false")+'">'+
+      '<span class="scnt">'+gradItems.length+'</span>🎓卒業生</button>';
+    btns.innerHTML=btnHTML;
     btns.querySelectorAll(".stagebtn").forEach(function(b){
       b.addEventListener("click",function(){ leadStage=b.dataset.stage; renderLeads(); });
     });
 
-    // 選んだ段階のカードを縦に一覧
-    var list=document.getElementById("lead-list");
+    // 卒業生アーカイブ：分類ごとにグループ表示
+    if(leadStage===GRAD){
+      if(!gradItems.length){ list.innerHTML='<div class="stage-empty">卒業生はまだいません。</div>'; return; }
+      var groups={};
+      sortLeads(gradItems).forEach(function(l){
+        var cate=l.gradwhere||"（分類なし）";
+        (groups[cate]=groups[cate]||[]).push(l);
+      });
+      var html="";
+      Object.keys(groups).forEach(function(cate){
+        html+='<div class="grad-group"><div class="grad-cate">'+esc(cate)+'　<span>'+groups[cate].length+'人</span></div>';
+        html+=groups[cate].map(function(l){ return leadCardHTML(l,null,false); }).join("");
+        html+='</div>';
+      });
+      list.innerHTML=html;
+      return;
+    }
+
     var items=leads.filter(function(l){return l.stage===leadStage;});
     if(leadStage==="予約"){ items=items.slice().sort(function(a,b){ return (a.rsvdate||"9999")<(b.rsvdate||"9999")?-1:1; }); }
+    else { items=sortLeads(items); }
     if(!items.length){ list.innerHTML='<div class="stage-empty">「'+leadStage+'」の人は、いまいません。</div>'; return; }
     list.innerHTML=items.map(function(l,idx){
-      var from=l.fromtype==="ご本人"?"ご本人から":esc(l.fromtype||"")+(l.fromname?"："+esc(l.fromname):"");
-      var w=reserveWarn(l);
-      var cls="lead"+(w&&w.cls==="over"?" warn-over":w&&w.cls==="soon"?" warn-soon":"");
-      return '<button class="'+cls+'" data-lead="'+l.id+'">'+
-        (leadStage==="予約"?'<span class="lorder">予約 '+(idx+1)+'番</span>':'')+
-        '<div class="lname">'+esc(l.name||"（名前なし）")+'</div>'+
-        '<div class="lfrom">'+from+(l.date?'　'+fmt(l.date):'')+'</div>'+
-        (w?'<span class="lwarn '+w.cls+'">'+esc(w.text)+'</span>':'')+
-        (l.next?'<div class="lnext">▶ '+esc(l.next)+'</div>':'')+
-      '</button>';
+      return leadCardHTML(l, leadStage==="予約"?idx:null, false);
     }).join("");
   }
 
@@ -617,8 +921,10 @@
     document.getElementById("d-movein").value=current.movein||"";
     document.getElementById("d-moveout").value=current.moveout||"";
     document.getElementById("d-return").value=current.return_||"";
+    document.getElementById("d-awaystart").value=current.awaystart||"";
     document.getElementById("d-memo").value=current.memo||"";
     document.querySelectorAll("#d-status button").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.s===current.status?"true":"false"); });
+    toggleAwayRow();
     document.getElementById("l-date").value=todayStr();
     document.getElementById("l-text").value="";
     renderRoomLogs();
@@ -635,13 +941,25 @@
   }
   function saveRoom(){
     if(!current)return;
+    var prevStatus=current.status;
+    var prevAwayStart=current.awaystart;
     current.tenant=document.getElementById("d-tenant").value.trim();
     current.movein=document.getElementById("d-movein").value;
     current.moveout=document.getElementById("d-moveout").value;
     current.return_=document.getElementById("d-return").value;
+    current.awaystart=document.getElementById("d-awaystart").value;
     current.memo=document.getElementById("d-memo").value.trim();
     var picked=document.querySelector('#d-status button[aria-pressed="true"]');
-    if(picked)current.status=picked.dataset.s;
+    var newStatus=picked?picked.dataset.s:current.status;
+    // 留守 → 他の状態に変わったら、留守期間を記録として残す（消えない）
+    if(prevStatus==="away" && newStatus!=="away"){
+      var start=prevAwayStart||current.awaystart||"";
+      var end=todayStr();
+      var label=start?("留守："+fmt(start)+"〜"+fmt(end)):("留守おわり："+fmt(end));
+      current.logs.push({id:uid(),date:end,text:label});
+      current.awaystart=""; // 次の留守にそなえてリセット
+    }
+    current.status=newStatus;
     renderBoard(); pushRooms();
     show("main"); switchMainTab("rooms");
   }
@@ -668,9 +986,9 @@
     // 段階ピッカー
     var sp=document.getElementById("lf-stage");
     var cur=L.stage||STAGES[0];
-    sp.innerHTML=STAGES.map(function(s){ return '<button data-stage="'+s+'" aria-pressed="'+(s===cur?"true":"false")+'">'+s+'</button>'; }).join("");
+    sp.innerHTML=ALL_STAGES.map(function(s){ return '<button data-stage="'+s+'" aria-pressed="'+(s===cur?"true":"false")+'">'+s+'</button>'; }).join("");
     sp.querySelectorAll("button").forEach(function(b){
-      b.addEventListener("click",function(){ sp.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed","false");}); b.setAttribute("aria-pressed","true"); });
+      b.addEventListener("click",function(){ sp.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed","false");}); b.setAttribute("aria-pressed","true"); toggleTrialPanel(); });
     });
     // 各欄
     setv("lf-name",L.name); setv("lf-sex",L.sex); setv("lf-age",L.age); setv("lf-addr",L.addr);
@@ -678,14 +996,185 @@
     setv("lf-tel1",L.tel1); setv("lf-tel2",L.tel2); setv("lf-mail",L.mail);
     setv("lf-date",L.date||todayStr()); setv("lf-staff",L.staff); setv("lf-route",L.route); setv("lf-source",L.source);
     setv("lf-content",L.content); setv("lf-action",L.action); setv("lf-follow",L.follow); setv("lf-next",L.next);
+    setv("lf-sentdate",L.sentdate); setv("lf-sentnote",L.sentnote);
     setv("lf-rsvdate",L.rsvdate); setv("lf-notifydate",L.notifydate); setv("lf-replieddate",L.replieddate);
     setv("lf-scheduleddate",L.scheduleddate); setv("lf-trialdate",L.trialdate);
+    setv("lf-trialstart",L.trialstart); setv("lf-trialend",L.trialend);
+    // 卒業分類の候補（初期値＋これまで使われた分類）を datalist に
+    var usedCates=leads.map(function(x){return x.gradwhere;}).filter(function(v){return v;});
+    var allCates=GRAD_CATES.concat(usedCates).filter(function(v,i,a){return a.indexOf(v)===i;});
+    document.getElementById("gradcates").innerHTML=allCates.map(function(c){return '<option value="'+esc(c)+'">';}).join("");
+    setv("lf-graddate",L.graddate); setv("lf-gradwhere",L.gradwhere); setv("lf-gradnote",L.gradnote);
+    // ケース記録（消えない履歴）。作業用にコピーして編集
+    curLeadLogs = (L.logs||[]).slice();
+    curLeadTags = (L.tags||[]).slice();
+    document.getElementById("lf-log-date").value=todayStr();
+    document.getElementById("lf-log-text").value="";
+    renderLeadLogs();
+    renderLeadTags();
+    toggleTrialPanel();
+    renderRoomLink();
+    document.getElementById("lf-revisit-panel").style.display=curLead?"block":"none";
     updateDeadlineView();
     ["lf-rsvdate","lf-notifydate","lf-replieddate","lf-scheduleddate"].forEach(function(id){
       var el=document.getElementById(id);
       el.oninput=updateDeadlineView;
     });
     show("leadform");
+  }
+  var curLeadLogs=[];
+  var curLeadTags=[];
+  function renderLeadTags(){
+    var box=document.getElementById("lf-tags");
+    var all=allTags();
+    curLeadTags.forEach(function(t){ if(all.indexOf(t)<0)all.push(t); });
+    box.innerHTML=all.map(function(t){
+      var on=curLeadTags.indexOf(t)>=0;
+      return '<button type="button" class="tagchip'+(on?' on':'')+'" data-tag="'+esc(t)+'">'+esc(t)+'</button>';
+    }).join("");
+  }
+  function addNewTag(){
+    var inp=document.getElementById("lf-tag-new");
+    var t=inp.value.trim();
+    if(!t)return;
+    if(curLeadTags.indexOf(t)<0)curLeadTags.push(t);
+    inp.value="";
+    renderLeadTags();
+  }
+  function toggleTrialPanel(){
+    var picked=document.querySelector('#lf-stage button[aria-pressed="true"]');
+    var stage=picked?picked.dataset.stage:"";
+    var isTrial=stage==="体験";
+    var tp=document.getElementById("lf-trial-panel");
+    tp.style.display=isTrial?"block":"none";
+    if(isTrial && !document.getElementById("lf-trialstart").value){
+      document.getElementById("lf-trialstart").value=todayStr();
+    }
+    // 卒業パネル
+    var isGrad=stage===GRAD;
+    var gp=document.getElementById("lf-grad-panel");
+    gp.style.display=isGrad?"block":"none";
+    if(isGrad && !document.getElementById("lf-graddate").value){
+      document.getElementById("lf-graddate").value=todayStr();
+    }
+  }
+  function renderLeadLogs(){
+    var box=document.getElementById("lf-logs");
+    if(!curLeadLogs.length){ box.innerHTML='<div class="log-empty">まだ記録はありません。下から追加できます。</div>'; return; }
+    var sorted=curLeadLogs.slice().sort(function(a,b){return a.date<b.date?1:-1;});
+    box.innerHTML=sorted.map(function(l){
+      return '<div class="log"><div class="ldate">'+fmt(l.date)+'</div><div class="ltext">'+esc(l.text)+'</div>'+
+        '<button class="ldel" data-logdel="'+l.id+'">この記録を消す</button></div>';
+    }).join("");
+  }
+  function addLeadLog(){
+    var text=document.getElementById("lf-log-text").value.trim();
+    if(!text){ alert("内容を入れてください。"); return; }
+    curLeadLogs.push({id:uid(),date:document.getElementById("lf-log-date").value||todayStr(),text:text});
+    document.getElementById("lf-log-text").value="";
+    document.getElementById("lf-log-date").value=todayStr();
+    renderLeadLogs();
+  }
+
+  /* ---- 問い合わせ↔部屋の連動 ---- */
+  function curLeadRoomId(){ return curLead?curLead.roomId:null; }
+  function renderRoomLink(){
+    var statusBox=document.getElementById("lf-room-status");
+    var btn=document.getElementById("lf-room-btn");
+    var clearBtn=document.getElementById("lf-room-clear");
+    var rid=curLeadRoomId();
+    var room=rid?rooms.find(function(r){return r.id===rid;}):null;
+    if(room){
+      statusBox.innerHTML='いま <b>'+esc(room.no)+'</b> に入居中として連動しています。';
+      btn.textContent="別の部屋に変える";
+      clearBtn.style.display="block";
+    }else{
+      statusBox.textContent="まだ部屋には入れていません。";
+      btn.textContent="部屋に入れる";
+      clearBtn.style.display="none";
+    }
+  }
+  function openRoomPick(){
+    if(!getv("lf-name")){ alert("先にご本人氏名を入れてください。"); return; }
+    var list=document.getElementById("roompick-list");
+    var rid=curLeadRoomId();
+    // 空室＋いま紐付いている部屋を候補に
+    var cand=rooms.filter(function(r){ return r.status==="vacant" || r.id===rid; });
+    if(!cand.length){ list.innerHTML='<div class="ov-empty">空いている部屋がありません。</div>'; }
+    else{
+      list.innerHTML=cand.map(function(r){
+        var sub=r.id===rid?"いまここ":(r.status==="vacant"?"空室":ST[r.status]);
+        return '<button class="ov-room'+(r.id===rid?' occ':'')+'" data-room="'+r.id+'"><span>'+esc(r.no)+'</span><span class="ovr-sub">'+sub+'</span></button>';
+      }).join("");
+    }
+    document.getElementById("roompick-ov").style.display="flex";
+  }
+  function closeRoomPick(){ document.getElementById("roompick-ov").style.display="none"; }
+  function assignRoom(roomId){
+    var name=getv("lf-name");
+    var moveinDate=getv("lf-date")||todayStr();
+    var prevId=curLeadRoomId();
+    // 付け替え：前の部屋を空室に戻す
+    if(prevId && prevId!==roomId){
+      var prev=rooms.find(function(r){return r.id===prevId;});
+      if(prev){ prev.status="vacant"; prev.tenant=""; }
+    }
+    var room=rooms.find(function(r){return r.id===roomId;});
+    if(room){
+      room.status="occupied";
+      room.tenant=name;
+      if(!room.movein) room.movein=moveinDate;
+    }
+    // 問い合わせ側に記憶（保存はsaveLeadでまとめて）
+    if(!curLead){ // 新規なら一旦確定が必要。最低限の保存をする
+      saveLeadSilently();
+    }
+    if(curLead){ curLead.roomId=roomId; }
+    pushRooms(); renderBoard();
+    closeRoomPick();
+    renderRoomLink();
+    flashMsg("お部屋に入れました。名前が自動で入っています。");
+  }
+  function doRevisit(){
+    if(!curLead){ alert("保存済みの人にだけ使えます。"); return; }
+    if(!confirm("「"+(curLead.name||"この人")+"」を再問い合わせにします。これまでの記録は残ります。よろしいですか？"))return;
+    // ケース記録に再来を自動追加
+    curLeadLogs.push({id:uid(),date:todayStr(),text:"再問い合わせ（また連絡がありました）"});
+    // 段階を問い合わせに戻す
+    document.querySelectorAll("#lf-stage button").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.stage==="問い合わせ"?"true":"false"); });
+    toggleTrialPanel();
+    // 問い合わせ日を今日に、次にやることをクリア
+    setv("lf-date",todayStr());
+    setv("lf-next","");
+    renderLeadLogs();
+    flashMsg("再問い合わせにしました。記録に追加済みです。保存を押してください。");
+  }
+  function clearRoomLink(){
+    var rid=curLeadRoomId();
+    if(!rid)return;
+    if(!confirm("部屋の紐付けを外します。お部屋は空室に戻ります。よろしいですか？"))return;
+    var room=rooms.find(function(r){return r.id===rid;});
+    if(room){ room.status="vacant"; room.tenant=""; }
+    if(curLead){ curLead.roomId=""; }
+    pushRooms(); renderBoard();
+    renderRoomLink();
+    flashMsg("紐付けを外しました。");
+  }
+  // 新規問い合わせを保存せずに部屋割り当てしたい場合、先に確定させる
+  function saveLeadSilently(){
+    var name=getv("lf-name"); if(!name)return;
+    var stageBtn=document.querySelector('#lf-stage button[aria-pressed="true"]');
+    var rec={ id:uid(), stage:stageBtn?stageBtn.dataset.stage:STAGES[0], name:name,
+      sex:getv("lf-sex"),age:getv("lf-age"),addr:getv("lf-addr"),fromtype:getv("lf-fromtype"),fromname:getv("lf-fromname"),
+      relation:getv("lf-relation"),tel1:getv("lf-tel1"),tel2:getv("lf-tel2"),mail:getv("lf-mail"),date:getv("lf-date"),
+      staff:getv("lf-staff"),route:getv("lf-route"),source:getv("lf-source"),content:getv("lf-content"),action:getv("lf-action"),
+      follow:getv("lf-follow"),next:getv("lf-next"),sentdate:getv("lf-sentdate"),sentnote:getv("lf-sentnote"),rsvdate:getv("lf-rsvdate"),notifydate:getv("lf-notifydate"),
+      replieddate:getv("lf-replieddate"),scheduleddate:getv("lf-scheduleddate"),trialdate:getv("lf-trialdate"),
+      trialstart:getv("lf-trialstart"),trialend:getv("lf-trialend"),graddate:getv("lf-graddate"),gradwhere:getv("lf-gradwhere"),gradnote:getv("lf-gradnote"),logs:curLeadLogs.slice(),tags:curLeadTags.slice(),roomId:"" };
+    leads.push(rec); curLead=rec; pushLeads();
+  }
+  function flashMsg(msg){
+    sync("idle",msg); setTimeout(function(){ sync("idle","共有OK（みんなと同じデータ）"); },2200);
   }
   function setv(id,v){ document.getElementById(id).value=v==null?"":v; }
   function updateDeadlineView(){
@@ -701,16 +1190,33 @@
     var name=getv("lf-name");
     if(!name){ alert("ご本人氏名を入れてください。"); return; }
     var stageBtn=document.querySelector('#lf-stage button[aria-pressed="true"]');
+    var newStage=stageBtn?stageBtn.dataset.stage:STAGES[0];
+    var prevStage=curLead?curLead.stage:null;
+    var trialStart=getv("lf-trialstart"), trialEnd=getv("lf-trialend");
+    // 体験 → 別の段階に進んだら、体験期間をケース記録に残す（消えない）
+    if(prevStage==="体験" && newStage!=="体験"){
+      var st=(curLead&&curLead.trialstart)||trialStart||"";
+      var en=trialEnd||todayStr();
+      var label=st?("体験："+fmt(st)+"〜"+fmt(en)):("体験おわり："+fmt(en));
+      curLeadLogs.push({id:uid(),date:en,text:label});
+      trialStart=""; trialEnd=""; // 次にそなえてリセット
+    }
     var rec={
       id:curLead?curLead.id:uid(),
-      stage:stageBtn?stageBtn.dataset.stage:STAGES[0],
+      stage:newStage,
       name:name, sex:getv("lf-sex"), age:getv("lf-age"), addr:getv("lf-addr"),
       fromtype:getv("lf-fromtype"), fromname:getv("lf-fromname"), relation:getv("lf-relation"),
       tel1:getv("lf-tel1"), tel2:getv("lf-tel2"), mail:getv("lf-mail"),
       date:getv("lf-date"), staff:getv("lf-staff"), route:getv("lf-route"), source:getv("lf-source"),
       content:getv("lf-content"), action:getv("lf-action"), follow:getv("lf-follow"), next:getv("lf-next"),
+      sentdate:getv("lf-sentdate"), sentnote:getv("lf-sentnote"),
       rsvdate:getv("lf-rsvdate"), notifydate:getv("lf-notifydate"), replieddate:getv("lf-replieddate"),
-      scheduleddate:getv("lf-scheduleddate"), trialdate:getv("lf-trialdate")
+      scheduleddate:getv("lf-scheduleddate"), trialdate:getv("lf-trialdate"),
+      trialstart:trialStart, trialend:trialEnd,
+      graddate:getv("lf-graddate"), gradwhere:getv("lf-gradwhere"), gradnote:getv("lf-gradnote"),
+      logs:curLeadLogs.slice(),
+      tags:curLeadTags.slice(),
+      roomId:(curLead&&curLead.roomId)||""
     };
     var i=leads.findIndex(function(x){return x.id===rec.id;});
     if(i>=0)leads[i]=rec; else leads.push(rec);
@@ -778,22 +1284,57 @@
   grid.addEventListener("click",function(e){ var b=e.target.closest(".room"); if(b)openDetail(b.dataset.id); });
   document.getElementById("lead-list").addEventListener("click",function(e){ var b=e.target.closest(".lead"); if(b)openLead(b.dataset.lead); });
   document.getElementById("fab-lead").addEventListener("click",function(){ openLead(null); });
+  document.getElementById("lead-search").addEventListener("input",function(){ leadSearch=this.value; renderLeads(); });
+  document.getElementById("lead-sort").addEventListener("change",function(){ leadSort=this.value; renderLeads(); });
+  document.getElementById("lf-log-add").addEventListener("click",addLeadLog);
+  document.getElementById("lf-tag-add").addEventListener("click",addNewTag);
+  document.getElementById("lf-tags").addEventListener("click",function(e){
+    var b=e.target.closest("[data-tag]"); if(!b)return;
+    var t=b.dataset.tag;
+    var i=curLeadTags.indexOf(t);
+    if(i>=0)curLeadTags.splice(i,1); else curLeadTags.push(t);
+    renderLeadTags();
+  });
+  document.getElementById("lf-room-btn").addEventListener("click",openRoomPick);
+  document.getElementById("lf-room-clear").addEventListener("click",function(){ mutate("部屋の紐付けを外した",clearRoomLink); });
+  document.getElementById("lf-revisit-btn").addEventListener("click",doRevisit);
+  document.getElementById("roompick-close").addEventListener("click",closeRoomPick);
+  document.getElementById("roompick-ov").addEventListener("click",function(e){ if(e.target===this)closeRoomPick(); });
+  document.getElementById("roompick-list").addEventListener("click",function(e){ var b=e.target.closest("[data-room]"); if(b)mutate("部屋に入れた",function(){ assignRoom(b.dataset.room); }); });
+  document.getElementById("lf-logs").addEventListener("click",function(e){
+    var b=e.target.closest("[data-logdel]"); if(!b)return;
+    if(!confirm("この記録を消します。よろしいですか？"))return;
+    curLeadLogs=curLeadLogs.filter(function(x){return x.id!==b.dataset.logdel;});
+    renderLeadLogs();
+  });
   document.querySelectorAll("[data-back]").forEach(function(b){ b.addEventListener("click",function(){ show("main"); current=null; curLead=null; }); });
   document.getElementById("open-settings").addEventListener("click",openSettings);
-  document.getElementById("d-save").addEventListener("click",saveRoom);
-  document.getElementById("l-add").addEventListener("click",addRoomLog);
-  document.getElementById("d-logs").addEventListener("click",function(e){ var d=e.target.closest("[data-del]"); if(d)delRoomLog(d.dataset.del); });
-  document.getElementById("lf-save").addEventListener("click",saveLead);
-  document.getElementById("lf-delete").addEventListener("click",deleteLead);
-  document.getElementById("set-save").addEventListener("click",saveSettings);
-  document.getElementById("set-count-apply").addEventListener("click",applyCount);
+  document.getElementById("d-save").addEventListener("click",function(){ mutate("部屋の変更を保存",saveRoom); });
+  document.getElementById("l-add").addEventListener("click",function(){ mutate("部屋の記録を追加",addRoomLog); });
+  document.getElementById("d-logs").addEventListener("click",function(e){ var d=e.target.closest("[data-del]"); if(d)mutate("部屋の記録を削除",function(){ delRoomLog(d.dataset.del); }); });
+  document.getElementById("lf-save").addEventListener("click",function(){ mutate("問い合わせを保存",saveLead); });
+  document.getElementById("lf-delete").addEventListener("click",function(){ mutate("問い合わせを削除",deleteLead); });
+  document.getElementById("set-save").addEventListener("click",function(){ mutate("設定を保存",saveSettings); });
+  document.getElementById("set-count-apply").addEventListener("click",function(){ mutate("部屋数を変更",applyCount); });
   document.getElementById("set-endpoint-save").addEventListener("click",saveEndpoint);
-  document.getElementById("set-reset").addEventListener("click",resetRooms);
+  document.getElementById("set-reset").addEventListener("click",function(){ mutate("部屋をすべて初期化",resetRooms); });
   document.querySelectorAll("#d-status button").forEach(function(b){
-    b.addEventListener("click",function(){ document.querySelectorAll("#d-status button").forEach(function(x){x.setAttribute("aria-pressed","false");}); b.setAttribute("aria-pressed","true"); });
+    b.addEventListener("click",function(){ document.querySelectorAll("#d-status button").forEach(function(x){x.setAttribute("aria-pressed","false");}); b.setAttribute("aria-pressed","true"); toggleAwayRow(); });
   });
   document.querySelectorAll("#filters .chip").forEach(function(c){
     c.addEventListener("click",function(){ filter=c.dataset.f; document.querySelectorAll("#filters .chip").forEach(function(x){x.setAttribute("aria-pressed", x===c?"true":"false");}); renderBoard(); });
+  });
+
+  // 取り消し（履歴）の操作
+  document.getElementById("undo-step").addEventListener("click",stepBack);
+  document.getElementById("undo-open").addEventListener("click",openUndoList);
+  document.getElementById("undo-close").addEventListener("click",closeUndoList);
+  document.getElementById("undo-ov").addEventListener("click",function(e){ if(e.target===this)closeUndoList(); });
+  document.getElementById("undo-list").addEventListener("click",function(e){
+    var b=e.target.closest("[data-uidx]"); if(!b)return;
+    if(!confirm("ここまで戻します。これより後の変更は取り消されます。よろしいですか？"))return;
+    closeUndoList();
+    restoreIndex(parseInt(b.dataset.uidx,10));
   });
 
   /* ---- 起動 ---- */
