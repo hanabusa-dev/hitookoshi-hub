@@ -133,6 +133,9 @@
   .tag-add{display:flex;gap:8px;margin-top:12px;}
   .tag-add input{flex:1;min-width:0;}
   .tag-add button{flex:0 0 auto;width:auto;min-height:50px;padding:0 18px;}
+  .maildoms{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px;}
+  .maildoms button{min-height:40px;border:2px solid var(--line);background:var(--surface-soft);color:var(--cln);border-radius:99px;font:inherit;font-weight:700;font-size:13px;padding:0 12px;cursor:pointer;}
+  .maildoms button:active{transform:scale(.97);}
 
   .fab{
     position:fixed;left:50%;transform:translateX(-50%);
@@ -175,6 +178,7 @@
   .stage-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
   .stage-pick button{min-height:48px;border:2px solid var(--line);background:var(--surface);border-radius:12px;font:inherit;font-weight:700;font-size:14px;cursor:pointer;color:var(--ink-soft);}
   .stage-pick button[aria-pressed="true"]{background:var(--lead-bg);color:var(--lead);border-color:var(--lead);}
+  .stage-pick button:disabled,.stage-pick button.stage-locked{opacity:.35;cursor:not-allowed;}
 
   .log{border-left:4px solid var(--line);padding:4px 0 14px 14px;margin-bottom:4px;}
   .log .ldate{font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:14px;color:var(--occ);}
@@ -198,6 +202,9 @@
   .ov-room{min-height:60px;border:2px solid var(--line);background:var(--surface);border-radius:12px;font:inherit;font-weight:700;cursor:pointer;padding:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--ink);}
   .ov-room .ovr-sub{font-size:12px;font-weight:600;color:var(--ink-soft);}
   .ov-room.occ{border-color:var(--occ);background:var(--occ-bg);}
+  .ov-room.can{border-color:var(--occ);}
+  .ov-room.can .ovr-sub{color:var(--occ);font-weight:700;}
+  .ov-room.cant{opacity:.5;background:var(--surface-soft);border-style:dashed;cursor:not-allowed;}
   .ov-empty{grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:20px;}
   .savebar{position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 72%,rgba(238,242,240,0));padding:10px 16px max(14px,env(safe-area-inset-bottom));z-index:6;margin:8px -16px 0;}
   .savebar .btn-primary{box-shadow:0 6px 22px rgba(0,0,0,.18);}
@@ -274,7 +281,7 @@
   <!-- 問い合わせボード -->
   <div id="tab-leads" style="display:none">
     <div class="lead-tools">
-      <input id="lead-search" class="lead-search" type="search" placeholder="🔍 名前で探す（全段階から）">
+      <input id="lead-search" class="lead-search" type="search" placeholder="🔍 名前で探す（どの段階の人でも）">
       <select id="lead-sort" class="lead-sort">
         <option value="input">入力順</option>
         <option value="date-new">問い合わせ日が新しい順</option>
@@ -366,6 +373,7 @@
   <div class="panel">
     <h3>ご本人のこと</h3>
     <label class="field"><span class="lab">ご本人氏名</span><input id="lf-name" placeholder="例：山田 花子"></label>
+    <label class="field"><span class="lab">フリガナ <span class="opt">（任意・ひらがな/カタカナでも探せます）</span></span><input id="lf-furigana" placeholder="例：やまだ はなこ"></label>
     <div class="frow">
       <label class="field"><span class="lab">性別 <span class="opt">（任意）</span></span>
         <select id="lf-sex"><option value="">―</option><option value="男性">男性</option><option value="女性">女性</option><option value="その他">その他</option></select>
@@ -398,7 +406,7 @@
       </label>
       <label class="field"><span class="lab">お名前 <span class="opt">（ご本人なら空欄）</span></span><input id="lf-fromname"></label>
     </div>
-    <label class="field"><span class="lab">ご本人との関係 <span class="opt">（例：長女、担当ケアマネ）</span></span><input id="lf-relation"></label>
+    <label class="field"><span class="lab">ご本人との関係 <span class="opt">（例：長女、息子）</span></span><input id="lf-relation"></label>
   </div>
 
   <div class="panel">
@@ -407,7 +415,15 @@
       <label class="field"><span class="lab">電話番号</span><input id="lf-tel1" type="tel"></label>
       <label class="field"><span class="lab">電話番号2 <span class="opt">（任意）</span></span><input id="lf-tel2" type="tel"></label>
     </div>
-    <label class="field"><span class="lab">メールアドレス <span class="opt">（任意）</span></span><input id="lf-mail" type="email"></label>
+    <label class="field"><span class="lab">メールアドレス <span class="opt">（任意）</span></span><input id="lf-mail" type="email" placeholder="例：yamada（＠の前だけ打ってボタンを押す）"></label>
+    <div class="maildoms" id="lf-maildoms">
+      <button type="button" data-dom="@gmail.com">@gmail.com</button>
+      <button type="button" data-dom="@yahoo.co.jp">@yahoo.co.jp</button>
+      <button type="button" data-dom="@docomo.ne.jp">@docomo.ne.jp</button>
+      <button type="button" data-dom="@au.com">@au.com</button>
+      <button type="button" data-dom="@softbank.ne.jp">@softbank.ne.jp</button>
+      <button type="button" data-dom="@icloud.com">@icloud.com</button>
+    </div>
   </div>
 
   <div class="panel" id="lf-reserve-panel">
@@ -439,7 +455,7 @@
       <label class="field"><span class="lab">経路 <span class="opt">（任意）</span></span>
         <select id="lf-route"><option value="">―</option><option>電話</option><option>メール</option><option>来所</option><option>紹介</option><option>その他</option></select>
       </label>
-      <label class="field"><span class="lab">どこで知った？ <span class="opt">（任意）</span></span><input id="lf-source" placeholder="例：ネット検索、チラシ"></label>
+      <label class="field"><span class="lab">どこで知った？ <span class="opt">（任意）</span></span><input id="lf-source" list="sourcecates" placeholder="選ぶ／自由に打つ"><datalist id="sourcecates"><option value="HP"><option value="LINE"><option value="YouTube"><option value="インスタ"><option value="行政"><option value="その他"></datalist></label>
     </div>
     <label class="field"><span class="lab">内容 <span class="opt">（任意）</span></span><textarea id="lf-content" placeholder="問い合わせの内容"></textarea></label>
     <label class="field"><span class="lab">対応 <span class="opt">（任意）</span></span><textarea id="lf-action" placeholder="どう対応したか"></textarea></label>
@@ -558,7 +574,7 @@
   // 卒業後の分類（初期値。lf-gradwhereのdatalistに出す。新しい名前も自由に打てる）
   var GRAD_CATES=["近隣OB（近隣在住）","一人暮らし｜報告あり","一人暮らし｜その他","通い継続","アーカイブ"];
   // 本人につけるオプションのタグ（初期値）。これまで使われたタグも候補に出し、新しいタグも自由に追加できる。
-  var TAG_PRESETS=["原付携行缶鍵","駐車場","サポート"];
+  var TAG_PRESETS=["原付携行缶鍵","駐車場","サポート","就労移行支援"];
 
   /* ---- 通信 ---- */
   // GAS配信(iframe内)なら google.script.run、単体HTMLなら fetch を使う
@@ -851,7 +867,7 @@
     // 検索モード：全段階から氏名で絞り込み、段階ボタンは隠す
     if(kw){
       btns.style.display="none";
-      var hits=sortLeads(leads.filter(function(l){ return (l.name||"").indexOf(kw)>=0; }));
+      var hits=sortLeads(leads.filter(function(l){ return (l.name||"").indexOf(kw)>=0 || (l.furigana||"").indexOf(kw)>=0; }));
       if(!hits.length){ list.innerHTML='<div class="stage-empty">「'+esc(kw)+'」に合う人はいません。</div>'; return; }
       list.innerHTML='<div class="search-hit">「'+esc(kw)+'」の検索結果：'+hits.length+'件</div>'+
         hits.map(function(l){ return leadCardHTML(l,null,true); }).join("");
@@ -997,7 +1013,7 @@
       b.addEventListener("click",function(){ sp.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed","false");}); b.setAttribute("aria-pressed","true"); toggleTrialPanel(); });
     });
     // 各欄
-    setv("lf-name",L.name); setv("lf-sex",L.sex); setv("lf-age",L.age); setv("lf-addr",L.addr);
+    setv("lf-name",L.name); setv("lf-furigana",L.furigana); setv("lf-sex",L.sex); setv("lf-age",L.age); setv("lf-addr",L.addr);
     setv("lf-fromtype",L.fromtype||"ご本人"); setv("lf-fromname",L.fromname); setv("lf-relation",L.relation);
     setv("lf-tel1",L.tel1); setv("lf-tel2",L.tel2); setv("lf-mail",L.mail);
     setv("lf-date",L.date||todayStr()); setv("lf-staff",L.staff); setv("lf-route",L.route); setv("lf-source",L.source);
@@ -1063,6 +1079,13 @@
     if(isGrad && !document.getElementById("lf-graddate").value){
       document.getElementById("lf-graddate").value=todayStr();
     }
+    // 卒業は「入居・通い参加」になってから移行できる（問い合わせ段階の人は卒業を選べない）
+    var gradBtn=document.querySelector('#lf-stage button[data-stage="'+GRAD+'"]');
+    if(gradBtn){
+      var canGrad=(stage==="入居"||stage==="通い参加"||stage===GRAD);
+      gradBtn.disabled=!canGrad;
+      gradBtn.classList.toggle("stage-locked",!canGrad);
+    }
   }
   function renderLeadLogs(){
     var box=document.getElementById("lf-logs");
@@ -1104,13 +1127,18 @@
     if(!getv("lf-name")){ alert("先にご本人氏名を入れてください。"); return; }
     var list=document.getElementById("roompick-list");
     var rid=curLeadRoomId();
-    // 空室＋いま紐付いている部屋を候補に
-    var cand=rooms.filter(function(r){ return r.status==="vacant" || r.id===rid; });
-    if(!cand.length){ list.innerHTML='<div class="ov-empty">空いている部屋がありません。</div>'; }
+    // 全部屋を表示。空室＋いま紐付いている部屋だけ選べる（埋まっている部屋はグレーで選べない）
+    if(!rooms.length){ list.innerHTML='<div class="ov-empty">部屋がありません。</div>'; }
     else{
-      list.innerHTML=cand.map(function(r){
-        var sub=r.id===rid?"いまここ":(r.status==="vacant"?"空室":ST[r.status]);
-        return '<button class="ov-room'+(r.id===rid?' occ':'')+'" data-room="'+r.id+'"><span>'+esc(r.no)+'</span><span class="ovr-sub">'+sub+'</span></button>';
+      list.innerHTML=rooms.map(function(r){
+        var selectable=(r.status==="vacant"||r.id===rid);
+        var sub;
+        if(r.id===rid) sub="いまここ";
+        else if(r.status==="vacant") sub="空室（ここに入れる）";
+        else sub=ST[r.status]+(r.tenant?"："+esc(r.tenant):"");
+        var cls="ov-room"+(r.id===rid?" occ":"")+(selectable?" can":" cant");
+        var attr=selectable?(' data-room="'+r.id+'"'):' disabled aria-disabled="true"';
+        return '<button class="'+cls+'"'+attr+'><span>'+esc(r.no)+'</span><span class="ovr-sub">'+sub+'</span></button>';
       }).join("");
     }
     document.getElementById("roompick-ov").style.display="flex";
@@ -1135,7 +1163,7 @@
     if(!curLead){ // 新規なら一旦確定が必要。最低限の保存をする
       saveLeadSilently();
     }
-    if(curLead){ curLead.roomId=roomId; }
+    if(curLead){ curLead.roomId=roomId; pushLeads(); }
     pushRooms(); renderBoard();
     closeRoomPick();
     renderRoomLink();
@@ -1170,7 +1198,7 @@
   function saveLeadSilently(){
     var name=getv("lf-name"); if(!name)return;
     var stageBtn=document.querySelector('#lf-stage button[aria-pressed="true"]');
-    var rec={ id:uid(), stage:stageBtn?stageBtn.dataset.stage:STAGES[0], name:name,
+    var rec={ id:uid(), stage:stageBtn?stageBtn.dataset.stage:STAGES[0], name:name, furigana:getv("lf-furigana"),
       sex:getv("lf-sex"),age:getv("lf-age"),addr:getv("lf-addr"),fromtype:getv("lf-fromtype"),fromname:getv("lf-fromname"),
       relation:getv("lf-relation"),tel1:getv("lf-tel1"),tel2:getv("lf-tel2"),mail:getv("lf-mail"),date:getv("lf-date"),
       staff:getv("lf-staff"),route:getv("lf-route"),source:getv("lf-source"),content:getv("lf-content"),action:getv("lf-action"),
@@ -1210,7 +1238,7 @@
     var rec={
       id:curLead?curLead.id:uid(),
       stage:newStage,
-      name:name, sex:getv("lf-sex"), age:getv("lf-age"), addr:getv("lf-addr"),
+      name:name, furigana:getv("lf-furigana"), sex:getv("lf-sex"), age:getv("lf-age"), addr:getv("lf-addr"),
       fromtype:getv("lf-fromtype"), fromname:getv("lf-fromname"), relation:getv("lf-relation"),
       tel1:getv("lf-tel1"), tel2:getv("lf-tel2"), mail:getv("lf-mail"),
       date:getv("lf-date"), staff:getv("lf-staff"), route:getv("lf-route"), source:getv("lf-source"),
@@ -1294,6 +1322,14 @@
   document.getElementById("lead-sort").addEventListener("change",function(){ leadSort=this.value; renderLeads(); });
   document.getElementById("lf-log-add").addEventListener("click",addLeadLog);
   document.getElementById("lf-tag-add").addEventListener("click",addNewTag);
+  document.getElementById("lf-maildoms").addEventListener("click",function(e){
+    var b=e.target.closest("[data-dom]"); if(!b)return;
+    var el=document.getElementById("lf-mail");
+    var v=el.value.trim();
+    var local=v.indexOf("@")>=0?v.slice(0,v.indexOf("@")):v;
+    el.value=local+b.dataset.dom;
+    el.focus();
+  });
   document.getElementById("lf-tags").addEventListener("click",function(e){
     var b=e.target.closest("[data-tag]"); if(!b)return;
     var t=b.dataset.tag;
