@@ -94,10 +94,16 @@
   .room.vacant{border-top-color:var(--vac);background:var(--surface-soft);} .room.vacant .tag{background:var(--vac-bg);color:var(--vac);}
   .room.cleaning{border-top-color:var(--cln);} .room.cleaning .tag{background:var(--cln-bg);color:var(--cln);}
   .room.work{border-top-color:var(--wrk);} .room.work .tag{background:var(--wrk-bg);color:var(--wrk);}
+  .room .ltags{margin-top:2px;}
+  .room .ltag{font-size:10px;padding:1px 6px;}
 
   /* ===== 問い合わせ（leads） ===== */
-  .stagebtns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 16px 4px;}
-  @media(min-width:600px){.stagebtns{grid-template-columns:repeat(6,1fr);}}
+  .stagebtns{display:block;padding:10px 16px 4px;}
+  .stage-group{margin-bottom:14px;}
+  .stage-group:last-child{margin-bottom:0;}
+  .stage-grouptitle{font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:14px;color:var(--ink-soft);margin-bottom:6px;padding-left:2px;}
+  .stage-grouprow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  @media(min-width:600px){.stage-grouprow{grid-template-columns:repeat(5,1fr);}}
   .stagebtn{min-height:60px;border:2px solid var(--line);background:var(--surface);border-radius:14px;font:inherit;font-weight:700;font-size:14px;cursor:pointer;color:var(--ink-soft);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 4px;}
   .stagebtn .scnt{font-family:"Zen Maru Gothic",sans-serif;font-weight:900;font-size:20px;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1;}
   .stagebtn[aria-pressed="true"]{background:var(--lead-bg);color:var(--lead);border-color:var(--lead);}
@@ -128,14 +134,48 @@
   .ltags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
   .ltag{font-size:11px;font-weight:700;color:var(--lead);background:var(--lead-bg);border-radius:6px;padding:1px 8px;}
   .tag-pick{display:flex;flex-wrap:wrap;gap:8px;}
-  .tagchip{min-height:44px;border:2px solid var(--line);background:var(--surface);color:var(--ink-soft);border-radius:99px;font:inherit;font-weight:700;font-size:14px;padding:0 14px;cursor:pointer;}
+  .tagchip{min-height:44px;border:2px solid var(--line);background:var(--surface);color:var(--ink-soft);border-radius:99px;font:inherit;font-weight:700;font-size:14px;padding:0 14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+  .tagchip .tagchk{font-size:18px;line-height:1;font-weight:400;color:var(--ink-soft);}
   .tagchip.on{background:var(--lead-bg);color:var(--lead);border-color:var(--lead);}
+  .tagchip.on .tagchk{color:var(--lead);font-weight:700;}
+  .tagchip:active{transform:scale(.97);}
   .tag-add{display:flex;gap:8px;margin-top:12px;}
   .tag-add input{flex:1;min-width:0;}
   .tag-add button{flex:0 0 auto;width:auto;min-height:50px;padding:0 18px;}
   .maildoms{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px;}
   .maildoms button{min-height:40px;border:2px solid var(--line);background:var(--surface-soft);color:var(--cln);border-radius:99px;font:inherit;font-weight:700;font-size:13px;padding:0 12px;cursor:pointer;}
   .maildoms button:active{transform:scale(.97);}
+  /* 郵便番号→住所 */
+  .zip-row{align-items:flex-end;gap:8px;}
+  .zip-row #lf-zip{width:140px;letter-spacing:1px;font-variant-numeric:tabular-nums;}
+  .zip-row #lf-zip-fetch{flex:0 0 auto;width:auto;min-height:50px;padding:0 16px;}
+  .zip-note{margin:6px 0 8px;}
+  .zip-note.ok{color:var(--occ);}
+  .zip-note.ng{color:var(--danger);}
+  /* 写真機能 */
+  .photo-add{margin-top:10px;display:flex;flex-direction:column;gap:8px;}
+  .btn-photo{align-self:flex-start;min-height:46px;border:2px dashed var(--lead);background:var(--lead-bg);color:var(--lead);border-radius:12px;font:inherit;font-weight:700;font-size:14px;padding:0 14px;cursor:pointer;}
+  .btn-photo:active{transform:scale(.97);}
+  .btn-photo:disabled{opacity:.45;cursor:not-allowed;}
+  .photo-thumbs{display:flex;flex-wrap:wrap;gap:6px;}
+  .photo-thumb{position:relative;width:64px;height:64px;border-radius:8px;overflow:hidden;border:2px solid var(--line);background:var(--surface-soft);cursor:pointer;flex:0 0 auto;}
+  .photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .photo-thumb .pt-del{position:absolute;top:-4px;right:-4px;width:22px;height:22px;border-radius:50%;border:none;background:var(--danger);color:#fff;font:inherit;font-weight:700;font-size:13px;line-height:1;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.3);}
+  .log .photo-thumbs{margin-top:6px;}
+  .photo-msg{font-size:12px;color:var(--ink-soft);}
+  .photo-msg.ng{color:var(--danger);}
+  /* 写真拡大オーバーレイ */
+  #photo-ov{align-items:center;justify-content:center;background:rgba(0,0,0,.85);padding:20px;}
+  .photo-ov-box{position:relative;max-width:100%;max-height:100%;}
+  .photo-ov-box img{max-width:100%;max-height:90vh;display:block;border-radius:8px;}
+  .photo-ov-close{position:absolute;top:-44px;right:0;width:40px;height:40px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.5);color:#fff;font:inherit;font-weight:700;font-size:18px;cursor:pointer;}
+  /* チェック欄（助成金まわりなど、ふつうの☑） */
+  .check-row{display:flex;align-items:center;gap:12px;min-height:50px;padding:10px 14px;border:2px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer;}
+  .check-row input[type="checkbox"]{width:24px;height:24px;min-height:24px;margin:0;cursor:pointer;accent-color:var(--occ);flex:0 0 auto;}
+  .check-row .check-label{font-weight:700;font-size:15px;color:var(--ink);}
+  .check-row:has(input:checked){background:var(--occ-bg);border-color:var(--occ);}
+  .resident-panel .row{margin-top:10px;}
+  .mimasaka-badge{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:var(--occ);border-radius:6px;padding:1px 8px;margin-left:6px;letter-spacing:.5px;}
 
   .fab{
     position:fixed;left:50%;transform:translateX(-50%);
@@ -158,6 +198,10 @@
   label.field .lab{font-size:14px;font-weight:700;margin-bottom:6px;display:block;}
   label.field .lab .opt{color:var(--ink-soft);font-weight:500;font-size:12px;}
   input,select,textarea{width:100%;font:inherit;font-size:17px;padding:11px 13px;border:2px solid var(--line);border-radius:12px;background:var(--surface-soft);color:var(--ink);min-height:var(--tap);}
+  /* 日付欄は「押せるボタン」っぽく目立たせる */
+  input[type="date"]{background:var(--occ-bg);border-color:var(--occ);color:var(--occ);font-weight:700;cursor:pointer;}
+  input[type="date"]:not(:placeholder-shown),input[type="date"][value]:not([value=""]){color:var(--ink);}
+  input[type="date"]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:.8;filter:saturate(2);}
   textarea{min-height:70px;resize:vertical;}
   input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid var(--cln);outline-offset:2px;}
   .wrap .row{display:flex;gap:10px;flex-wrap:wrap;}
@@ -206,7 +250,7 @@
   .ov-room.can .ovr-sub{color:var(--occ);font-weight:700;}
   .ov-room.cant{opacity:.5;background:var(--surface-soft);border-style:dashed;cursor:not-allowed;}
   .ov-empty{grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:20px;}
-  .savebar{position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 72%,rgba(238,242,240,0));padding:10px 16px max(14px,env(safe-area-inset-bottom));z-index:6;margin:8px -16px 0;}
+  .savebar{position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 72%,rgba(238,242,240,0));padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 28px);z-index:6;margin:8px -16px 0;}
   .savebar .btn-primary{box-shadow:0 6px 22px rgba(0,0,0,.18);}
   .savebar .btn-delete{margin-top:8px;}
   /* 操作の取り消し（やり直し履歴） */
@@ -321,13 +365,36 @@
     <label class="field"><span class="lab">入居者の名前 <span class="opt">（空室なら空欄）</span></span><input id="d-tenant" placeholder="例：山田さん"></label>
     <label class="field"><span class="lab">入居日 <span class="opt">（任意）</span></span><input id="d-movein" type="date"></label>
     <div class="row">
-      <label class="field" style="flex:1"><span class="lab">退去予定日 <span class="opt">（決まったら）</span></span><input id="d-moveout" type="date"></label>
+      <label class="field" style="flex:1;min-width:0"><span class="lab">退去予定日 <span class="opt">（決まったら）</span></span><input id="d-moveout" type="date"></label>
     </div>
     <div class="row" id="d-away-row" style="display:none">
-      <label class="field" style="flex:1"><span class="lab">留守 開始日 <span class="opt">（自動・直せます）</span></span><input id="d-awaystart" type="date"></label>
-      <label class="field" style="flex:1"><span class="lab">戻り予定日 <span class="opt">（任意）</span></span><input id="d-return" type="date"></label>
+      <label class="field" style="flex:1;min-width:0"><span class="lab">留守 開始日 <span class="opt">（自動・直せます）</span></span><input id="d-awaystart" type="date"></label>
+      <label class="field" style="flex:1;min-width:0"><span class="lab">戻り予定日 <span class="opt">（任意）</span></span><input id="d-return" type="date"></label>
     </div>
     <label class="field"><span class="lab">メモ <span class="opt">（任意）</span></span><textarea id="d-memo" placeholder="部屋の特徴・注意点など"></textarea></label>
+
+    <div class="panel resident-panel" id="d-resident">
+      <h3>住民票</h3>
+      <p class="setnote" style="margin-bottom:10px">美作市に住民票がある人は、助成金（年間報告）の対象になります。日にちは入れたい時だけでOK。</p>
+      <label class="check-row">
+        <input type="checkbox" id="d-mimasaka">
+        <span class="check-label">☑ 美作市民（住民票が美作市にある）</span>
+      </label>
+      <div class="row" id="d-mimasaka-dates" style="display:none">
+        <label class="field" style="flex:1;min-width:0"><span class="lab">転入日 <span class="opt">（任意）</span></span><input id="d-movein-city" type="date"></label>
+        <label class="field" style="flex:1;min-width:0"><span class="lab">転出日 <span class="opt">（出ていったとき）</span></span><input id="d-moveout-city" type="date"></label>
+      </div>
+    </div>
+
+    <div class="panel" id="d-tag-panel">
+      <h3>タグ（オプション）</h3>
+      <p class="setnote" style="margin-bottom:10px">原付・駐車場・サポートなど、入居者ごとの目印。いくつでも付けられます。</p>
+      <div class="tag-pick" id="d-tags"></div>
+      <div class="tag-add">
+        <input id="d-tag-new" placeholder="新しいタグを打って追加">
+        <button class="btn-primary blue" id="d-tag-add" type="button">追加</button>
+      </div>
+    </div>
   </div>
   <div class="panel">
     <h3>できごと・設備の記録</h3>
@@ -337,7 +404,11 @@
         <label class="field" style="flex:0 0 150px"><span class="lab">日にち</span><input id="l-date" type="date"></label>
         <label class="field" style="flex:1"><span class="lab">内容</span><input id="l-text" placeholder="例：エアコン新しく交換"></label>
       </div>
-      <p class="note-photo">※ 写真の共有は次の段階で対応します（今は文字データのみ）。</p>
+      <div class="photo-add">
+        <input type="file" id="l-photo-input" accept="image/*" capture="environment" multiple hidden>
+        <button class="btn-photo" id="l-photo-btn" type="button">📷 写真を追加</button>
+        <div class="photo-thumbs" id="l-photo-thumbs"></div>
+      </div>
       <button class="btn-primary blue" id="l-add">記録を追加する</button>
     </div>
   </div>
@@ -380,17 +451,12 @@
       </label>
       <label class="field"><span class="lab">年齢 <span class="opt">（任意）</span></span><input id="lf-age" type="number" inputmode="numeric" min="0" max="130"></label>
     </div>
-    <label class="field"><span class="lab">住所 <span class="opt">（任意）</span></span><input id="lf-addr"></label>
-  </div>
-
-  <div class="panel">
-    <h3>タグ（オプション）</h3>
-    <p class="setnote" style="margin-bottom:10px">サブスク・追加費用・鍵の貸し出しなど、通常と違う扱いの目印。いくつでも付けられます。</p>
-    <div class="tag-pick" id="lf-tags"></div>
-    <div class="tag-add">
-      <input id="lf-tag-new" placeholder="新しいタグを打って追加">
-      <button class="btn-primary blue" id="lf-tag-add" type="button">追加</button>
+    <div class="row zip-row">
+      <label class="field" style="flex:0 0 auto;min-width:0"><span class="lab">郵便番号 <span class="opt">（任意）</span></span><input id="lf-zip" type="text" inputmode="numeric" maxlength="8" placeholder="例：7300011"></label>
+      <button class="btn-primary blue" id="lf-zip-fetch" type="button">住所を出す</button>
     </div>
+    <p class="setnote zip-note" id="lf-zip-msg" style="display:none"></p>
+    <label class="field"><span class="lab">住所 <span class="opt">（任意）</span></span><input id="lf-addr"></label>
   </div>
 
   <div class="panel">
@@ -492,7 +558,11 @@
         <label class="field" style="flex:0 0 150px"><span class="lab">日にち</span><input id="lf-log-date" type="date"></label>
         <label class="field" style="flex:1"><span class="lab">内容</span><input id="lf-log-text" placeholder="例：面談、電話相談の内容など"></label>
       </div>
-      <p class="note-photo">※ 写真の添付は次の段階で対応します（今は文字データのみ）。</p>
+      <div class="photo-add">
+        <input type="file" id="lf-photo-input" accept="image/*" capture="environment" multiple hidden>
+        <button class="btn-photo" id="lf-photo-btn" type="button">📷 写真を追加</button>
+        <div class="photo-thumbs" id="lf-photo-thumbs"></div>
+      </div>
       <button class="btn-primary blue" id="lf-log-add">記録を追加する</button>
     </div>
   </div>
@@ -508,6 +578,14 @@
   <div class="ov-box">
     <div class="ov-head"><b>どのお部屋に入れますか？</b><button class="ov-close" id="roompick-close" type="button">✕</button></div>
     <div id="roompick-list" class="ov-list"></div>
+  </div>
+</div>
+
+<!-- ===== 写真の拡大表示 ===== -->
+<div id="photo-ov" class="ov" style="display:none">
+  <div class="photo-ov-box">
+    <button class="photo-ov-close" id="photo-ov-close" type="button" aria-label="閉じる">✕</button>
+    <img id="photo-ov-img" alt="写真">
   </div>
 </div>
 
@@ -632,6 +710,84 @@
       document.getElementById("d-awaystart").value=todayStr(); // 自動で今日
     }
   }
+  function toggleMimasakaDates(){
+    var on=document.getElementById("d-mimasaka").checked;
+    document.getElementById("d-mimasaka-dates").style.display=on?"flex":"none";
+  }
+  // 部屋詳細のタグ（オプション）描画・追加。入居者がいる部屋でだけ表示
+  function renderRoomTags(){
+    var panel=document.getElementById("d-tag-panel");
+    var box=document.getElementById("d-tags");
+    if(!box||!panel)return;
+    var tenantInput=document.getElementById("d-tenant");
+    var name=tenantInput?tenantInput.value:(current&&current.tenant)||"";
+    var hasTenant=!!(name&&name.trim());
+    panel.style.display=hasTenant?"block":"none";
+    if(!hasTenant)return;
+    var all=allTags();
+    curRoomTags.forEach(function(t){ if(all.indexOf(t)<0)all.push(t); });
+    box.innerHTML=all.map(function(t){
+      var on=curRoomTags.indexOf(t)>=0;
+      return '<button type="button" class="tagchip'+(on?' on':'')+'" data-tag="'+esc(t)+'"><span class="tagchk" aria-hidden="true">'+(on?'☑':'☐')+'</span>'+esc(t)+'</button>';
+    }).join("");
+  }
+  function addNewRoomTag(){
+    var inp=document.getElementById("d-tag-new");
+    if(!inp)return;
+    var t=inp.value.trim();
+    if(!t)return;
+    if(curRoomTags.indexOf(t)<0)curRoomTags.push(t);
+    inp.value="";
+    renderRoomTags();
+  }
+
+  // 郵便番号から住所を取ってくる（zipcloud API）
+  // 7桁の数字を渡すと、{result: "岡山県美作市..."} を返す。エラー時は {error: "メッセージ"}。
+  // fetchはネットワーク制限がある環境では動かないので、本物の動きは実機（GitHub Pages配信先）で確認する。
+  async function fetchAddressByZip(zip7){
+    var url="https://zipcloud.ibsnet.co.jp/api/search?zipcode="+encodeURIComponent(zip7);
+    try{
+      var res=await fetch(url);
+      var data=await res.json();
+      if(data && data.results && data.results[0]){
+        var r=data.results[0];
+        return { result: (r.address1||"")+(r.address2||"")+(r.address3||"") };
+      }
+      return { error:"その郵便番号の住所が見つかりませんでした。" };
+    }catch(e){
+      return { error:"ネットにつながらへんみたい。様子を見てもう一度試して。" };
+    }
+  }
+  async function onZipFetch(){
+    var zipInput=document.getElementById("lf-zip");
+    var msg=document.getElementById("lf-zip-msg");
+    var addrInput=document.getElementById("lf-addr");
+    var raw=(zipInput.value||"").replace(/[^0-9]/g,"");
+    if(raw.length!==7){
+      msg.className="setnote zip-note ng"; msg.style.display="block";
+      msg.textContent="郵便番号は7桁の数字で打ってな（例：7300011）。";
+      return;
+    }
+    msg.className="setnote zip-note"; msg.style.display="block"; msg.textContent="調べてます…";
+    var result=await fetchAddressByZip(raw);
+    if(result.error){
+      msg.className="setnote zip-note ng"; msg.textContent=result.error;
+      return;
+    }
+    // 住所の頭に取得結果を入れる（既存の入力があれば残す）
+    var existing=(addrInput.value||"").trim();
+    if(existing && existing.indexOf(result.result)===0){
+      // 既に同じ住所が入ってる → そのまま
+    }else if(existing){
+      addrInput.value=result.result;   // 上書き（地名違いを切り替えたケースを想定）
+    }else{
+      addrInput.value=result.result;
+    }
+    msg.className="setnote zip-note ok"; msg.textContent="住所を入れたで。続きは手で打ってな。";
+    addrInput.focus();
+    // カーソルを末尾に
+    try{ addrInput.setSelectionRange(addrInput.value.length, addrInput.value.length); }catch(e){}
+  }
   function fmt(s){ if(!s)return""; var p=s.split("-"); if(p.length!==3)return s; var w=["日","月","火","水","木","金","土"][new Date(+p[0],+p[1]-1,+p[2]).getDay()]; return (+p[1])+"/"+(+p[2])+"("+w+")"; }
   function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
 
@@ -654,8 +810,8 @@
       var got=await Promise.all([Remote.loadRooms(),Remote.loadLeads()]);
       rooms=got[0]; leads=got[1];
       if(!rooms.length){ rooms=defaults(); await Remote.saveRooms(rooms); }
-      rooms.forEach(function(r){ r.logs=r.logs||[]; if(r.sex===undefined)r.sex=""; });
-      leads.forEach(function(l){ if(!l.stage||ALL_STAGES.indexOf(l.stage)<0)l.stage=STAGES[0]; if(!l.tags)l.tags=[]; });
+      rooms.forEach(function(r){ r.logs=r.logs||[]; r.logs.forEach(function(l){ if(!l.photos)l.photos=[]; }); if(r.sex===undefined)r.sex=""; });
+      leads.forEach(function(l){ if(!l.stage||ALL_STAGES.indexOf(l.stage)<0)l.stage=STAGES[0]; if(!l.tags)l.tags=[]; (l.logs||[]).forEach(function(lg){ if(!lg.photos)lg.photos=[]; }); });
       await Local.set(LS_ROOMS,rooms); await Local.set(LS_LEADS,leads);
       renderAll();
       initHistory();
@@ -683,6 +839,99 @@
     sync("busy","共有先に保存中…");
     try{ await Remote.saveLeads(leads); sync("idle","保存しました（3人に反映）"); }
     catch(e){ sync("err","保存できませんでした。電波を確かめて、もう一度。",true); }
+  }
+
+  /* ============================================================
+     写真の取り扱い
+     ・スマホ撮影の数MB画像を横幅800px・JPEG70%に圧縮（1枚50〜100KB目安）
+     ・記録に直接埋め込む（dataURL）。スプシ1セル5万文字制限のため、1件5枚まで運用
+     ============================================================ */
+  function compressImage(file, maxWidth){
+    maxWidth = maxWidth || 800;
+    return new Promise(function(resolve, reject){
+      var reader = new FileReader();
+      reader.onerror = function(){ reject(new Error("ファイルが読めません")); };
+      reader.onload = function(){
+        var img = new Image();
+        img.onerror = function(){ reject(new Error("画像として読めません")); };
+        img.onload = function(){
+          try{
+            var w = img.naturalWidth, h = img.naturalHeight;
+            if(w > maxWidth){ h = Math.round(h * (maxWidth / w)); w = maxWidth; }
+            var canvas = document.createElement("canvas");
+            canvas.width = w; canvas.height = h;
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            var dataURL = canvas.toDataURL("image/jpeg", 0.7);
+            resolve(dataURL);
+          }catch(e){ reject(e); }
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  function dataURLBytes(s){ return s ? Math.floor((s.length-22)*3/4) : 0; }
+  var PHOTO_MAX_PER_LOG = 5;   // 1記録あたりの上限
+
+  // 追加中の記録に付ける写真（保留分）。保存時に records に乗る。
+  var pendingRoomPhotos = [];   // 部屋の記録の追加欄
+  var pendingLeadPhotos = [];   // ケース記録の追加欄
+
+  function renderPendingPhotos(side){
+    var thumbs = document.getElementById(side==="room"?"l-photo-thumbs":"lf-photo-thumbs");
+    var btn = document.getElementById(side==="room"?"l-photo-btn":"lf-photo-btn");
+    var list = side==="room"?pendingRoomPhotos:pendingLeadPhotos;
+    if(!thumbs||!btn)return;
+    thumbs.innerHTML = list.map(function(p){
+      return '<div class="photo-thumb" data-pending="'+p.id+'" data-side="'+side+'">'+
+        '<img src="'+p.data+'" alt="写真">'+
+        '<button class="pt-del" data-pdel="'+p.id+'" type="button" aria-label="削除">×</button>'+
+      '</div>';
+    }).join("");
+    var atMax = list.length >= PHOTO_MAX_PER_LOG;
+    btn.disabled = atMax;
+    btn.textContent = atMax ? "📷 写真は5枚までです" : "📷 写真を追加";
+  }
+
+  async function onPhotoPicked(side, files){
+    if(!files||!files.length)return;
+    var list = side==="room"?pendingRoomPhotos:pendingLeadPhotos;
+    var room = side==="room";
+    for(var i=0;i<files.length;i++){
+      if(list.length>=PHOTO_MAX_PER_LOG){ alert("写真は1記録あたり5枚までです。"); break; }
+      try{
+        var dataURL = await compressImage(files[i]);
+        list.push({ id:uid(), data:dataURL, type:"image/jpeg" });
+      }catch(e){
+        alert("写真の取り込みに失敗しました："+(e.message||e));
+      }
+    }
+    renderPendingPhotos(side);
+  }
+  function removePendingPhoto(side, pid){
+    var list = side==="room"?pendingRoomPhotos:pendingLeadPhotos;
+    var i = list.findIndex(function(p){ return p.id===pid; });
+    if(i>=0) list.splice(i,1);
+    renderPendingPhotos(side);
+  }
+  function clearPendingPhotos(side){
+    if(side==="room") pendingRoomPhotos=[];
+    else pendingLeadPhotos=[];
+    renderPendingPhotos(side);
+  }
+
+  // 写真の拡大表示
+  function openPhotoZoom(dataURL){
+    var img = document.getElementById("photo-ov-img");
+    if(!img)return;
+    img.src = dataURL;
+    document.getElementById("photo-ov").style.display="flex";
+    pushOv("photo");
+  }
+  function closePhotoZoom(){
+    document.getElementById("photo-ov").style.display="none";
+    if(ovStack[ovStack.length-1]==="photo"){ navSuppressPop=true; history.back(); }
   }
 
   /* ============================================================
@@ -736,8 +985,9 @@
     }
     document.getElementById("undo-list").innerHTML=rows;
     document.getElementById("undo-ov").style.display="flex";
+    pushOv("undo");
   }
-  function closeUndoList(){ document.getElementById("undo-ov").style.display="none"; }
+  function closeUndoList(){ document.getElementById("undo-ov").style.display="none"; if(ovStack[ovStack.length-1]==="undo"){ navSuppressPop=true; history.back(); } }
   function stepBack(){
     if(!histStack.length)return;
     if(!confirm("直前の変更を取り消します。3人の共有データも戻ります。よろしいですか？"))return;
@@ -788,9 +1038,11 @@
       var due='';
       if(r.moveout)due='<span class="due">退去予定 '+fmt(r.moveout)+'</span>';
       else if(r.status==="away"&&r.return_)due='<span class="due">戻り '+fmt(r.return_)+'</span>';
+      var tagHTML=(r.tags&&r.tags.length&&r.tenant)?'<div class="ltags">'+r.tags.map(function(t){return '<span class="ltag">'+esc(t)+'</span>';}).join("")+'</div>':'';
       return '<button class="room '+r.status+'" data-id="'+r.id+'">'+
         '<div class="no">'+esc(r.no)+'<span class="tag">'+ST[r.status]+'</span></div>'+
-        '<div class="who'+(r.tenant?'':' empty')+'">'+(r.tenant?esc(r.tenant):'空室')+'</div>'+
+        '<div class="who'+(r.tenant?'':' empty')+'">'+(r.tenant?esc(r.tenant):'空室')+(r.mimasaka&&r.tenant?'<span class="mimasaka-badge">美作</span>':'')+'</div>'+
+        tagHTML+
         '<div class="foot">'+sex+due+(n?'<span>📝 '+n+'件</span>':'')+'</div>'+
       '</button>';
     }).join("");
@@ -835,10 +1087,11 @@
     return a;
   }
 
-  // 候補に出すタグ＝初期タグ＋これまで使われたタグ（重複除去）
+  // 候補に出すタグ＝初期タグ＋これまで使われたタグ（リード側・部屋側の両方から集約）
   function allTags(){
     var used=[];
     leads.forEach(function(l){ (l.tags||[]).forEach(function(t){ if(t)used.push(t); }); });
+    rooms.forEach(function(r){ (r.tags||[]).forEach(function(t){ if(t)used.push(t); }); });
     return TAG_PRESETS.concat(used).filter(function(v,i,a){ return v && a.indexOf(v)===i; });
   }
 
@@ -846,14 +1099,11 @@
     var from=l.fromtype==="ご本人"?"ご本人から":esc(l.fromtype||"")+(l.fromname?"："+esc(l.fromname):"");
     var w=reserveWarn(l);
     var cls="lead"+(w&&w.cls==="over"?" warn-over":w&&w.cls==="soon"?" warn-soon":"");
-    var tags=(l.tags||[]);
-    var tagHTML=tags.length?'<div class="ltags">'+tags.map(function(t){return '<span class="ltag">'+esc(t)+'</span>';}).join("")+'</div>':'';
     return '<button class="'+cls+'" data-lead="'+l.id+'">'+
       (idx!=null?'<span class="lorder">予約 '+(idx+1)+'番</span>':'')+
       (showStageTag?'<span class="lstagetag">'+esc(l.stage)+'</span>':'')+
       '<div class="lname">'+esc(l.name||"（名前なし）")+'</div>'+
       '<div class="lfrom">'+from+(l.date?'　'+fmt(l.date):'')+'</div>'+
-      tagHTML+
       (w?'<span class="lwarn '+w.cls+'">'+esc(w.text)+'</span>':'')+
       (l.next?'<div class="lnext">▶ '+esc(l.next)+'</div>':'')+
     '</button>';
@@ -874,16 +1124,21 @@
       return;
     }
 
-    // 通常モード：段階ボタン（最後に「卒業生」アーカイブ枠）＋一覧
-    btns.style.display="grid";
-    var btnHTML=STAGES.map(function(st){
-      var items=leads.filter(function(l){return l.stage===st;});
-      var hasOver=items.some(function(l){ var w=reserveWarn(l); return w&&w.cls==="over"; });
-      return '<button class="stagebtn'+(hasOver?' has-warn':'')+'" data-stage="'+st+'" aria-pressed="'+(st===leadStage?"true":"false")+'">'+
-        '<span class="scnt">'+items.length+'</span>'+st+(hasOver?'<span class="swarn">⚠期限すぎあり</span>':'')+
-      '</button>';
-    }).join("");
-    btns.innerHTML=btnHTML;
+    // 通常モード：段階ボタンを「これから」「入居中」の2グループで見出し分け
+    btns.style.display="block";
+    var COMING=["問い合わせ","資料送付","見学","予約","体験"];
+    var LIVING=["入居","通い参加"];
+    function groupHTML(label,emoji,stages){
+      var buttons=stages.map(function(st){
+        var items=leads.filter(function(l){return l.stage===st;});
+        var hasOver=items.some(function(l){ var w=reserveWarn(l); return w&&w.cls==="over"; });
+        return '<button class="stagebtn'+(hasOver?' has-warn':'')+'" data-stage="'+st+'" aria-pressed="'+(st===leadStage?"true":"false")+'">'+
+          '<span class="scnt">'+items.length+'</span>'+st+(hasOver?'<span class="swarn">⚠期限すぎあり</span>':'')+
+        '</button>';
+      }).join("");
+      return '<div class="stage-group"><div class="stage-grouptitle">'+emoji+' '+label+'</div><div class="stage-grouprow">'+buttons+'</div></div>';
+    }
+    btns.innerHTML=groupHTML("これから","🌱",COMING)+groupHTML("入居中","🏠",LIVING);
     btns.querySelectorAll(".stagebtn").forEach(function(b){
       b.addEventListener("click",function(){ leadStage=b.dataset.stage; renderLeads(); });
     });
@@ -918,11 +1173,64 @@
   }
 
   /* ---- 画面切替 ---- */
+  // ブラウザ「戻る」・スマホのフリック戻りと連動するためのスタック
+  // ルール：前に進むときだけpushする。popstate(=戻る押された)が来たら内部の戻る処理だけ走らせ、push し直さへん
+  var navStack=[];           // 訪問した画面の履歴（"main","detail","leadform","settings"）
+  var ovStack=[];            // 上に重なるオーバーレイの履歴（"roompick","undo"）
+  var navSuppressPop=false;  // 内部からhistory.back()するときに、popstate応答を一時的に止める旗
+
+  function pushNav(name){
+    if(navStack[navStack.length-1]===name) return;  // 同じ画面の連打はpushしない
+    navStack.push(name);
+    history.pushState({navStack:navStack.slice(),ovStack:ovStack.slice()},"");
+  }
+  function pushOv(name){
+    if(ovStack[ovStack.length-1]===name) return;
+    ovStack.push(name);
+    history.pushState({navStack:navStack.slice(),ovStack:ovStack.slice()},"");
+  }
+  function popOv(){
+    if(!ovStack.length)return;
+    var name=ovStack.pop();
+    if(name==="roompick") document.getElementById("roompick-ov").style.display="none";
+    else if(name==="undo") document.getElementById("undo-ov").style.display="none";
+    else if(name==="photo") document.getElementById("photo-ov").style.display="none";
+  }
+  function popNav(){
+    if(navStack.length<=1){
+      // メインしか残ってない → これ以上戻る画面はない。終了させる（ブラウザに任せる）
+      navSuppressPop=false;
+      return false;
+    }
+    navStack.pop();                              // 今の画面を捨てる
+    var prev=navStack[navStack.length-1];        // 1つ前へ
+    Object.keys(screens).forEach(function(k){ screens[k].style.display=k===prev?"block":"none"; });
+    document.getElementById("fab-lead").style.display=(prev==="main"&&mainTab==="leads")?"flex":"none";
+    if(prev==="main"){ current=null; curLead=null; }
+    window.scrollTo(0,0);
+    return true;
+  }
+  window.addEventListener("popstate",function(){
+    if(navSuppressPop){ navSuppressPop=false; return; }
+    // オーバーレイが開いていれば、まずそれを閉じる
+    if(ovStack.length){ popOv(); return; }
+    // 通常の画面戻り
+    popNav();
+  });
+
   var screens={main:document.getElementById("main"),detail:document.getElementById("detail"),leadform:document.getElementById("leadform"),settings:document.getElementById("settings")};
   function show(which){
     Object.keys(screens).forEach(function(k){ screens[k].style.display=k===which?"block":"none"; });
     document.getElementById("fab-lead").style.display=(which==="main"&&mainTab==="leads")?"flex":"none";
     window.scrollTo(0,0);
+    // 「メインに戻る」呼び出しの場合は、すでにpopstate経由で戻ってきてる可能性があるので、push判定はpushNav側のガードに任せる
+    if(which==="main"){
+      // メインに戻った＝スタックを綺麗にする（複数の中間画面を一気に閉じる場合も対応）
+      navStack=["main"];
+      history.replaceState({navStack:navStack.slice(),ovStack:[]},"");
+    }else{
+      pushNav(which);
+    }
   }
   function switchMainTab(t){
     mainTab=t;
@@ -945,10 +1253,17 @@
     document.getElementById("d-return").value=current.return_||"";
     document.getElementById("d-awaystart").value=current.awaystart||"";
     document.getElementById("d-memo").value=current.memo||"";
+    document.getElementById("d-mimasaka").checked=!!current.mimasaka;
+    document.getElementById("d-movein-city").value=current.movein_city||"";
+    document.getElementById("d-moveout-city").value=current.moveout_city||"";
+    toggleMimasakaDates();
+    curRoomTags=(current.tags||[]).slice();
+    renderRoomTags();
     document.querySelectorAll("#d-status button").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.s===current.status?"true":"false"); });
     toggleAwayRow();
     document.getElementById("l-date").value=todayStr();
     document.getElementById("l-text").value="";
+    clearPendingPhotos("room");
     renderRoomLogs();
     show("detail");
   }
@@ -957,7 +1272,12 @@
     if(!current.logs.length){ box.innerHTML='<div class="log-empty">まだ記録はありません。下から追加できます。</div>'; return; }
     var sorted=current.logs.slice().sort(function(a,b){return a.date<b.date?1:-1;});
     box.innerHTML=sorted.map(function(l){
-      return '<div class="log"><div class="ldate">'+fmt(l.date)+'</div><div class="ltext">'+esc(l.text)+'</div>'+
+      var photos=(l.photos||[]);
+      var thumbsHTML=photos.length?'<div class="photo-thumbs">'+photos.map(function(p){
+        return '<div class="photo-thumb" data-zoom="'+p.id+'" data-logid="'+l.id+'"><img src="'+p.data+'" alt="写真"></div>';
+      }).join("")+'</div>':'';
+      return '<div class="log" data-logid="'+l.id+'"><div class="ldate">'+fmt(l.date)+'</div><div class="ltext">'+esc(l.text)+'</div>'+
+        thumbsHTML+
         '<button class="ldel" data-del="'+l.id+'">この記録を消す</button></div>';
     }).join("");
   }
@@ -971,6 +1291,10 @@
     current.return_=document.getElementById("d-return").value;
     current.awaystart=document.getElementById("d-awaystart").value;
     current.memo=document.getElementById("d-memo").value.trim();
+    current.mimasaka=document.getElementById("d-mimasaka").checked;
+    current.movein_city=document.getElementById("d-movein-city").value;
+    current.moveout_city=document.getElementById("d-moveout-city").value;
+    current.tags=current.tenant?curRoomTags.slice():[];   // 空室の部屋はタグを持たない
     var picked=document.querySelector('#d-status button[aria-pressed="true"]');
     var newStatus=picked?picked.dataset.s:current.status;
     // 留守 → 他の状態に変わったら、留守期間を記録として残す（消えない）
@@ -988,9 +1312,12 @@
   function addRoomLog(){
     if(!current)return;
     var text=document.getElementById("l-text").value.trim();
+    if(!text && !pendingRoomPhotos.length){ alert("内容を入れてください（写真だけでもOKなら、ひと言メモを足してな）。"); return; }
     if(!text){ alert("内容を入れてください。"); return; }
-    current.logs.push({id:uid(),date:document.getElementById("l-date").value||todayStr(),text:text});
+    var photos = pendingRoomPhotos.slice();
+    current.logs.push({id:uid(),date:document.getElementById("l-date").value||todayStr(),text:text,photos:photos});
     document.getElementById("l-text").value=""; document.getElementById("l-date").value=todayStr();
+    clearPendingPhotos("room");
     renderRoomLogs(); renderBoard(); pushRooms();
   }
   function delRoomLog(id){
@@ -1013,7 +1340,8 @@
       b.addEventListener("click",function(){ sp.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed","false");}); b.setAttribute("aria-pressed","true"); toggleTrialPanel(); });
     });
     // 各欄
-    setv("lf-name",L.name); setv("lf-furigana",L.furigana); setv("lf-sex",L.sex); setv("lf-age",L.age); setv("lf-addr",L.addr);
+    setv("lf-name",L.name); setv("lf-furigana",L.furigana); setv("lf-sex",L.sex); setv("lf-age",L.age); setv("lf-zip",L.zip); setv("lf-addr",L.addr);
+    var zm=document.getElementById("lf-zip-msg"); if(zm){zm.style.display="none";zm.className="setnote zip-note";zm.textContent="";}
     setv("lf-fromtype",L.fromtype||"ご本人"); setv("lf-fromname",L.fromname); setv("lf-relation",L.relation);
     setv("lf-tel1",L.tel1); setv("lf-tel2",L.tel2); setv("lf-mail",L.mail);
     setv("lf-date",L.date||todayStr()); setv("lf-staff",L.staff); setv("lf-route",L.route); setv("lf-source",L.source);
@@ -1032,6 +1360,7 @@
     curLeadTags = (L.tags||[]).slice();
     document.getElementById("lf-log-date").value=todayStr();
     document.getElementById("lf-log-text").value="";
+    clearPendingPhotos("lead");
     renderLeadLogs();
     renderLeadTags();
     toggleTrialPanel();
@@ -1046,17 +1375,20 @@
   }
   var curLeadLogs=[];
   var curLeadTags=[];
+  var curRoomTags=[];
   function renderLeadTags(){
     var box=document.getElementById("lf-tags");
+    if(!box)return;   // 問い合わせ側のタグUIは撤去済み（データは保持）
     var all=allTags();
     curLeadTags.forEach(function(t){ if(all.indexOf(t)<0)all.push(t); });
     box.innerHTML=all.map(function(t){
       var on=curLeadTags.indexOf(t)>=0;
-      return '<button type="button" class="tagchip'+(on?' on':'')+'" data-tag="'+esc(t)+'">'+esc(t)+'</button>';
+      return '<button type="button" class="tagchip'+(on?' on':'')+'" data-tag="'+esc(t)+'"><span class="tagchk" aria-hidden="true">'+(on?'☑':'☐')+'</span>'+esc(t)+'</button>';
     }).join("");
   }
   function addNewTag(){
     var inp=document.getElementById("lf-tag-new");
+    if(!inp)return;
     var t=inp.value.trim();
     if(!t)return;
     if(curLeadTags.indexOf(t)<0)curLeadTags.push(t);
@@ -1092,16 +1424,23 @@
     if(!curLeadLogs.length){ box.innerHTML='<div class="log-empty">まだ記録はありません。下から追加できます。</div>'; return; }
     var sorted=curLeadLogs.slice().sort(function(a,b){return a.date<b.date?1:-1;});
     box.innerHTML=sorted.map(function(l){
-      return '<div class="log"><div class="ldate">'+fmt(l.date)+'</div><div class="ltext">'+esc(l.text)+'</div>'+
+      var photos=(l.photos||[]);
+      var thumbsHTML=photos.length?'<div class="photo-thumbs">'+photos.map(function(p){
+        return '<div class="photo-thumb" data-zoom="'+p.id+'" data-logid="'+l.id+'" data-side="lead"><img src="'+p.data+'" alt="写真"></div>';
+      }).join("")+'</div>':'';
+      return '<div class="log" data-logid="'+l.id+'"><div class="ldate">'+fmt(l.date)+'</div><div class="ltext">'+esc(l.text)+'</div>'+
+        thumbsHTML+
         '<button class="ldel" data-logdel="'+l.id+'">この記録を消す</button></div>';
     }).join("");
   }
   function addLeadLog(){
     var text=document.getElementById("lf-log-text").value.trim();
     if(!text){ alert("内容を入れてください。"); return; }
-    curLeadLogs.push({id:uid(),date:document.getElementById("lf-log-date").value||todayStr(),text:text});
+    var photos = pendingLeadPhotos.slice();
+    curLeadLogs.push({id:uid(),date:document.getElementById("lf-log-date").value||todayStr(),text:text,photos:photos});
     document.getElementById("lf-log-text").value="";
     document.getElementById("lf-log-date").value=todayStr();
+    clearPendingPhotos("lead");
     renderLeadLogs();
   }
 
@@ -1142,8 +1481,9 @@
       }).join("");
     }
     document.getElementById("roompick-ov").style.display="flex";
+    pushOv("roompick");
   }
-  function closeRoomPick(){ document.getElementById("roompick-ov").style.display="none"; }
+  function closeRoomPick(){ document.getElementById("roompick-ov").style.display="none"; if(ovStack[ovStack.length-1]==="roompick"){ navSuppressPop=true; history.back(); } }
   function assignRoom(roomId){
     var name=getv("lf-name");
     var moveinDate=getv("lf-date")||todayStr();
@@ -1199,7 +1539,7 @@
     var name=getv("lf-name"); if(!name)return;
     var stageBtn=document.querySelector('#lf-stage button[aria-pressed="true"]');
     var rec={ id:uid(), stage:stageBtn?stageBtn.dataset.stage:STAGES[0], name:name, furigana:getv("lf-furigana"),
-      sex:getv("lf-sex"),age:getv("lf-age"),addr:getv("lf-addr"),fromtype:getv("lf-fromtype"),fromname:getv("lf-fromname"),
+      sex:getv("lf-sex"),age:getv("lf-age"),zip:getv("lf-zip"),addr:getv("lf-addr"),fromtype:getv("lf-fromtype"),fromname:getv("lf-fromname"),
       relation:getv("lf-relation"),tel1:getv("lf-tel1"),tel2:getv("lf-tel2"),mail:getv("lf-mail"),date:getv("lf-date"),
       staff:getv("lf-staff"),route:getv("lf-route"),source:getv("lf-source"),content:getv("lf-content"),action:getv("lf-action"),
       follow:getv("lf-follow"),next:getv("lf-next"),sentdate:getv("lf-sentdate"),sentnote:getv("lf-sentnote"),rsvdate:getv("lf-rsvdate"),notifydate:getv("lf-notifydate"),
@@ -1238,7 +1578,7 @@
     var rec={
       id:curLead?curLead.id:uid(),
       stage:newStage,
-      name:name, furigana:getv("lf-furigana"), sex:getv("lf-sex"), age:getv("lf-age"), addr:getv("lf-addr"),
+      name:name, furigana:getv("lf-furigana"), sex:getv("lf-sex"), age:getv("lf-age"), zip:getv("lf-zip"), addr:getv("lf-addr"),
       fromtype:getv("lf-fromtype"), fromname:getv("lf-fromname"), relation:getv("lf-relation"),
       tel1:getv("lf-tel1"), tel2:getv("lf-tel2"), mail:getv("lf-mail"),
       date:getv("lf-date"), staff:getv("lf-staff"), route:getv("lf-route"), source:getv("lf-source"),
@@ -1321,7 +1661,9 @@
   document.getElementById("lead-search").addEventListener("input",function(){ leadSearch=this.value; renderLeads(); });
   document.getElementById("lead-sort").addEventListener("change",function(){ leadSort=this.value; renderLeads(); });
   document.getElementById("lf-log-add").addEventListener("click",addLeadLog);
-  document.getElementById("lf-tag-add").addEventListener("click",addNewTag);
+  var _tagAddBtn=document.getElementById("lf-tag-add"); if(_tagAddBtn)_tagAddBtn.addEventListener("click",addNewTag);
+  document.getElementById("lf-zip-fetch").addEventListener("click",onZipFetch);
+  document.getElementById("lf-zip").addEventListener("keydown",function(e){ if(e.key==="Enter"){ e.preventDefault(); onZipFetch(); } });
   document.getElementById("lf-maildoms").addEventListener("click",function(e){
     var b=e.target.closest("[data-dom]"); if(!b)return;
     var el=document.getElementById("lf-mail");
@@ -1330,7 +1672,8 @@
     el.value=local+b.dataset.dom;
     el.focus();
   });
-  document.getElementById("lf-tags").addEventListener("click",function(e){
+  var _tagsBox=document.getElementById("lf-tags");
+  if(_tagsBox) _tagsBox.addEventListener("click",function(e){
     var b=e.target.closest("[data-tag]"); if(!b)return;
     var t=b.dataset.tag;
     var i=curLeadTags.indexOf(t);
@@ -1344,16 +1687,53 @@
   document.getElementById("roompick-ov").addEventListener("click",function(e){ if(e.target===this)closeRoomPick(); });
   document.getElementById("roompick-list").addEventListener("click",function(e){ var b=e.target.closest("[data-room]"); if(b)mutate("部屋に入れた",function(){ assignRoom(b.dataset.room); }); });
   document.getElementById("lf-logs").addEventListener("click",function(e){
+    var z=e.target.closest("[data-zoom]");
+    if(z){
+      var logId=z.dataset.logid, pid=z.dataset.zoom;
+      var log=curLeadLogs.find(function(l){return l.id===logId;});
+      var p=log&&(log.photos||[]).find(function(p){return p.id===pid;});
+      if(p) openPhotoZoom(p.data);
+      return;
+    }
     var b=e.target.closest("[data-logdel]"); if(!b)return;
     if(!confirm("この記録を消します。よろしいですか？"))return;
     curLeadLogs=curLeadLogs.filter(function(x){return x.id!==b.dataset.logdel;});
     renderLeadLogs();
   });
-  document.querySelectorAll("[data-back]").forEach(function(b){ b.addEventListener("click",function(){ show("main"); current=null; curLead=null; }); });
+  document.querySelectorAll("[data-back]").forEach(function(b){ b.addEventListener("click",function(){ history.back(); }); });
+  // 写真機能
+  document.getElementById("l-photo-btn").addEventListener("click",function(){ document.getElementById("l-photo-input").click(); });
+  document.getElementById("l-photo-input").addEventListener("change",function(e){ onPhotoPicked("room", e.target.files); e.target.value=""; });
+  document.getElementById("l-photo-thumbs").addEventListener("click",function(e){
+    var del=e.target.closest("[data-pdel]");
+    if(del){ removePendingPhoto("room", del.dataset.pdel); return; }
+    var z=e.target.closest("[data-pending]");
+    if(z){ var p=pendingRoomPhotos.find(function(p){return p.id===z.dataset.pending;}); if(p) openPhotoZoom(p.data); }
+  });
+  document.getElementById("lf-photo-btn").addEventListener("click",function(){ document.getElementById("lf-photo-input").click(); });
+  document.getElementById("lf-photo-input").addEventListener("change",function(e){ onPhotoPicked("lead", e.target.files); e.target.value=""; });
+  document.getElementById("lf-photo-thumbs").addEventListener("click",function(e){
+    var del=e.target.closest("[data-pdel]");
+    if(del){ removePendingPhoto("lead", del.dataset.pdel); return; }
+    var z=e.target.closest("[data-pending]");
+    if(z){ var p=pendingLeadPhotos.find(function(p){return p.id===z.dataset.pending;}); if(p) openPhotoZoom(p.data); }
+  });
+  document.getElementById("photo-ov-close").addEventListener("click",closePhotoZoom);
+  document.getElementById("photo-ov").addEventListener("click",function(e){ if(e.target===this)closePhotoZoom(); });
   document.getElementById("open-settings").addEventListener("click",openSettings);
   document.getElementById("d-save").addEventListener("click",function(){ mutate("部屋の変更を保存",saveRoom); });
   document.getElementById("l-add").addEventListener("click",function(){ mutate("部屋の記録を追加",addRoomLog); });
-  document.getElementById("d-logs").addEventListener("click",function(e){ var d=e.target.closest("[data-del]"); if(d)mutate("部屋の記録を削除",function(){ delRoomLog(d.dataset.del); }); });
+  document.getElementById("d-logs").addEventListener("click",function(e){
+    var z=e.target.closest("[data-zoom]");
+    if(z){
+      var logId=z.dataset.logid, pid=z.dataset.zoom;
+      var log=(current.logs||[]).find(function(l){return l.id===logId;});
+      var p=log&&(log.photos||[]).find(function(p){return p.id===pid;});
+      if(p) openPhotoZoom(p.data);
+      return;
+    }
+    var d=e.target.closest("[data-del]"); if(d)mutate("部屋の記録を削除",function(){ delRoomLog(d.dataset.del); });
+  });
   document.getElementById("lf-save").addEventListener("click",function(){ mutate("問い合わせを保存",saveLead); });
   document.getElementById("lf-delete").addEventListener("click",function(){ mutate("問い合わせを削除",deleteLead); });
   document.getElementById("set-save").addEventListener("click",function(){ mutate("設定を保存",saveSettings); });
@@ -1362,6 +1742,17 @@
   document.getElementById("set-reset").addEventListener("click",function(){ mutate("部屋をすべて初期化",resetRooms); });
   document.querySelectorAll("#d-status button").forEach(function(b){
     b.addEventListener("click",function(){ document.querySelectorAll("#d-status button").forEach(function(x){x.setAttribute("aria-pressed","false");}); b.setAttribute("aria-pressed","true"); toggleAwayRow(); });
+  });
+  document.getElementById("d-mimasaka").addEventListener("change",toggleMimasakaDates);
+  document.getElementById("d-tenant").addEventListener("input",renderRoomTags);
+  var _dTagAdd=document.getElementById("d-tag-add"); if(_dTagAdd)_dTagAdd.addEventListener("click",addNewRoomTag);
+  var _dTagsBox=document.getElementById("d-tags");
+  if(_dTagsBox) _dTagsBox.addEventListener("click",function(e){
+    var b=e.target.closest("[data-tag]"); if(!b)return;
+    var t=b.dataset.tag;
+    var i=curRoomTags.indexOf(t);
+    if(i>=0)curRoomTags.splice(i,1); else curRoomTags.push(t);
+    renderRoomTags();
   });
   document.querySelectorAll("#filters .chip").forEach(function(c){
     c.addEventListener("click",function(){ filter=c.dataset.f; document.querySelectorAll("#filters .chip").forEach(function(x){x.setAttribute("aria-pressed", x===c?"true":"false");}); renderBoard(); });
@@ -1381,6 +1772,8 @@
 
   /* ---- 起動 ---- */
   (async function init(){
+    navStack=["main"];
+    history.replaceState({navStack:["main"],ovStack:[]},"");
     var saved=await Local.get(LS_ENDPOINT); if(saved)ENDPOINT=saved;
     reloadAll();
   })();
